@@ -1,0 +1,31 @@
+# @package _global_
+defaults:
+  - model: quantum_walk
+  - training: default
+  - data: synthetic_graph
+  - optimizer: adam
+  - _self_
+
+# Experiment configuration
+experiment_name: quconet_experiment
+output_dir: results
+seed: null  # null for random seed
+
+# Device configuration
+device: auto  # auto, cpu, cuda
+
+# Logging configuration
+log_level: INFO
+wandb:
+  enabled: false
+  project: quconet
+  entity: null
+  tags: []
+
+# Hydra configuration
+hydra:
+  run:
+    dir: ${output_dir}/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: ${output_dir}/multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${experiment_name}

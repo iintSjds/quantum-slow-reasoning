@@ -1,0 +1,19 @@
+# @package _global_
+model:
+  _target_: quconet.modules.QuantumCoNet
+
+  # Graph parameters
+  N: 10  # Number of nodes
+  K: 2   # Degree of each node
+
+  # Quantum walk parameters
+  max_steps: 10  # Maximum quantum walk steps
+
+  # Model initialization
+  init_strategy: uniform  # uniform, random, basis, xavier, kaiming
+
+  # Loss function
+  loss_type: standard  # standard, log_prob, stepwise
+
+  # Device
+  device: ${device}  # auto, cpu, cuda

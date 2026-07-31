@@ -1,0 +1,25 @@
+# @package _global_
+data:
+  # Graph generation
+  graph_type: synthetic  # synthetic, from_file, random_regular
+
+  # Synthetic graph parameters
+  N: ${model.N}
+  K: ${model.K}
+  graph_seed: null  # null for random seed
+
+  # QA pairs configuration
+  qa_pairs: null  # null to generate automatically, or list of tuples
+  num_qa_pairs: 20  # Number of QA pairs to generate if qa_pairs is null
+  max_distance: 3  # Maximum distance for generated QA pairs
+  qa_generation_strategy: uniform  # uniform, distance_weighted, random
+
+  # Data validation
+  validate_graph: true  # Check if graph is valid (undirected, regular)
+  ensure_connected: true  # Ensure graph is connected
+
+  # Data augmentation
+  augmentation:
+    enabled: false
+    flip_probability: 0.1  # Probability of flipping QA pairs
+    noise_std: 0.0  # Add Gaussian noise to node features (if any)

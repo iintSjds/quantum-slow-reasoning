@@ -1,0 +1,8 @@
+# Exact statevector / Markov simulation and analysis
+torch>=2.0
+numpy>=1.24
+matplotlib>=3.7
+networkx>=3.0
+# Training-driver configuration (quconet.trainer)
+hydra-core>=1.3
+omegaconf>=2.3

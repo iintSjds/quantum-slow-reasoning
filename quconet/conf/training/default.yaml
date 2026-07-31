@@ -1,0 +1,36 @@
+# @package _global_
+training:
+  # Training parameters
+  num_epochs: 100
+  batch_size: 16
+  learning_rate: 0.01
+  gradient_clip: null  # null or float value
+
+  # Evaluation and logging
+  eval_frequency: 10  # Evaluate every N epochs
+  save_frequency: 50  # Save checkpoint every N epochs
+  log_frequency: 1  # Log metrics every N epochs
+
+  # Early stopping
+  early_stopping:
+    enabled: false
+    patience: 20
+    min_delta: 0.001
+    monitor: success_rate
+
+  # Model selection
+  model_selection:
+    metric: success_rate  # Metric to track for best model
+    mode: max  # max or min
+
+  # Regularization
+  weight_decay: 0.0  # L2 regularization
+  dropout: 0.0  # Dropout rate (if applicable)
+
+  # Mixed precision training
+  mixed_precision: false
+
+  # Distributed training
+  distributed: false
+  world_size: 1
+  rank: 0
