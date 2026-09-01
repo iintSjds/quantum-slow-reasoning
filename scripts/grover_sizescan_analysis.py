@@ -22,6 +22,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "_sweep_out")
 CACHES = {
@@ -127,27 +128,26 @@ def main():
     # figure: advantage and catch-up vs N at B=32 (quantum exists at all N<=480)
     Ns = [N for N in (120, 240, 480) if N in caches]
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-    for ax, split in zip(axes, ("train", "valid")):
+    for ax, split, title in zip(axes, ("train", "valid"), ("training", "held-out")):
         gA = [rows[(N, 32, split)]["gA"] for N in Ns]
         b3 = [rows[(N, 32, split)]["b3"] for N in Ns]
         b9 = [rows[(N, 32, split)]["b9"] for N in Ns]
         ax.plot(Ns, gA, "-o", color="#d62728", lw=1.8,
-                label="QuCoNet($A_1$) + 1 Grover (3 queries)")
+                label="Grover-trained, $q=3$")
         ax.plot(Ns, b3, "-v", color="#17becf", lw=1.8,
-                label="CoNet best-2-trained (exact) + best@3")
-        ax.plot(Ns, b9, "--x", color="#1f77b4", lw=1.4,
-                label="CoNet best-2-trained (exact) + best@9")
+                label="best-of-two trained, three attempts")
+        ax.plot(Ns, b9, ":x", color="0.45", lw=1.3,
+                label="nine-attempt contextual reference")
         ax.set_xscale("log", base=2)
         ax.set_xticks(Ns); ax.set_xticklabels(Ns)
-        ax.set_xlabel("problem size N")
-        ax.set_title(f"{split}  (B=32, random-regular)")
-        ax.grid(alpha=0.3)
-    axes[0].set_ylabel("success rate")
+        ax.set_xlabel(r"graph size $N$")
+        ax.set_title(title)
+        ax.grid(alpha=0.25)
+    axes[0].set_ylabel("accuracy")
     axes[1].legend(fontsize=8)
-    fig.suptitle("Problem-size scan: matched-budget gap vs N")
     fig.tight_layout()
-    f = os.path.join(OUT, "S7_size_scan.png")
-    fig.savefig(f, dpi=150, bbox_inches="tight"); plt.close(fig)
+    f = os.path.join(OUT, "S7_size_scan.pdf")
+    fig.savefig(f, bbox_inches="tight"); plt.close(fig)
     print(f"fig -> {f}")
 
     json.dump({f"{N}|{B}|{s}": {k: (str(v) if v == math.inf else v)

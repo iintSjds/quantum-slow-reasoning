@@ -3,7 +3,7 @@
 Main-text figure 1: the opening figure pairs the
 framework with its signature behavior --
   (a) the QuCoNet AR circuit          -- the proposed quantum reasoning model
-                                         (drawn by notes/plot_mapping_schematic)
+                                         (drawn by notes/scripts/plot_mapping_schematic)
   (b) CoNet, one-shot trained         -- classical walker collapses to one route
   (c) QuCoNet, Grover-trained         -- amplification keeps a branching ensemble
 
@@ -27,6 +27,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import networkx as nx
+
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -84,28 +85,26 @@ def draw_maps(ax):
     ax.plot(p, quantum, color=RED, lw=2.6)
     p_star = 0.25
     ax.axvline(p_star, color="0.15", lw=1.0, ls="--")
-    ax.text(p_star, 1.01, r"$p^{*}(1)=1/4$", ha="center", va="bottom",
-            fontsize=9)
     ax.annotate("", xy=(0.17, 0.13), xytext=(0.05, 0.13),
                 arrowprops=dict(arrowstyle="->", color=RED, lw=1.7))
     ax.annotate("", xy=(0.33, 0.13), xytext=(0.49, 0.13),
                 arrowprops=dict(arrowstyle="->", color=RED, lw=1.7))
-    ax.text(0.25, 0.18, "quantum\ntraining target", color=RED, fontsize=8.5,
+    ax.text(0.25, 0.18, "Grover\ntraining target", color=RED, fontsize=11,
             ha="center")
-    ax.text(0.70, 0.905, "three classical\nattempts", color=BLUE, fontsize=8.5,
+    ax.text(0.70, 0.84, "three classical\nattempts", color=BLUE, fontsize=11,
             ha="center")
-    ax.text(0.135, 0.72, "one fixed\nGrover round", color=RED, fontsize=8.5,
+    ax.text(0.135, 0.72, "one fixed\nGrover round", color=RED, fontsize=11,
             ha="left")
-    ax.text(0.40, 0.34, "one attempt", color=GRAY, fontsize=8.5,
+    ax.text(0.40, 0.34, "one attempt", color=GRAY, fontsize=11,
             ha="center", rotation=33)
     ax.set(xlim=(0, 1), ylim=(0, 1.05),
-           xlabel="base success probability  $p$",
+           xlabel=r"base success probability $p$",
            ylabel="accuracy after inference")
     ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.spines[["top", "right"]].set_visible(False)
-    ax.set_title("Sampling is monotone; one coherent round\n"
-                 "makes an interior certainty target", fontsize=10)
+    ax.set_title("Sampling is monotone; one Grover round\n"
+                 "creates an interior optimum", fontsize=10)
 
 
 # ── panels (a),(b): flow on the trained walk (adapted from three_models) ──
@@ -172,7 +171,7 @@ def prepare(args):
     KCOL = ["#d62728", "#2ca02c", "#1f77b4"]   # coin channels (quantum only)
     CCOL = "#08306b"                           # classical: no coin register
     panels = [
-        ("CoNet, one-shot (classical walker)",
+        ("CoNet, single-attempt training",
          gnp.classical_success_paths(tp, nbr, Q, A, args.M), False),
         ("QuCoNet, Grover-trained",
          gnp.success_path_probs(apd, cmg, snmg, scmg, Q, A, N, K, args.M), True),
@@ -218,8 +217,8 @@ def render_flow_panel(ax, D, panel, width_fn=flow_width, alpha_fn=flow_alpha):
     for node, c, m in ((D["Q"], "#2ca02c", "o"), (D["A"], "#9467bd", "*")):
         ax.scatter(*D["pos"][node], s=140, c=c, marker=m, zorder=5,
                    edgecolors="k", linewidths=0.7)
-    ax.set_title(f"{lab}:  $p={pt:.3f}$,  IPR$\\,={ipr:.2f}$  "
-                 f"({len(paths)} paths)", fontsize=10)
+    ax.set_title(rf"{lab}: $p={pt:.3f}$, $\mathrm{{IPR}}={ipr:.2f}$",
+                 fontsize=10)
     ax.set_xlim(*D["xlim"]); ax.set_ylim(*D["ylim"])
     ax.set_axis_off()
 
@@ -238,7 +237,7 @@ def build(args):
     ax_conet = fig.add_subplot(gs[0, 1])
     ax_qu = fig.add_subplot(gs[1, 1])
 
-    pms.draw_circuit(ax_arch)
+    pms.draw_circuit(ax_arch, description=False)
     ax_arch.set_xlim(-0.4, 12.0)
     ax_arch.set_ylim(-1.6, 5.6)
     ax_arch.axis("off")
@@ -248,8 +247,9 @@ def build(args):
 
     handles = [plt.Line2D([0], [0], color=c, lw=2.4) for c in D["KCOL"]]
     ax_qu.legend(handles, [r"$|0\rangle$", r"$|1\rangle$", r"$|2\rangle$"],
-                 fontsize=7.5, loc="lower left", framealpha=0.9, ncol=3,
-                 title="coin channel", title_fontsize=7.5,
+                 fontsize=10, loc="lower left", bbox_to_anchor=(0, -0.12),
+                 framealpha=0.9, ncol=3,
+                 title="path-record channel", title_fontsize=10,
                  columnspacing=0.9, handlelength=1.1)
 
     ax_arch.text(0.005, 1.045, "a", transform=ax_arch.transAxes, fontsize=13,
@@ -260,8 +260,8 @@ def build(args):
                fontweight="bold", va="top")
 
     os.makedirs(OUTDIR, exist_ok=True)
-    out = os.path.join(OUTDIR, "Q1_arch_routing.png")
-    fig.savefig(out, dpi=200, bbox_inches="tight")
+    out = os.path.join(OUTDIR, "Q1_arch_routing.pdf")
+    fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     print(f"fig -> {out}  (Q={Q} A={A}, grover IPR {best_ipr:.2f})")
 

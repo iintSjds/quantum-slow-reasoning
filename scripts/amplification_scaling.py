@@ -29,6 +29,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import torch
 
+
 # ── reuse the exact-p enumerators from conet/analyze_path_diversity.py ──
 def _import_enumerators(root=None):
     sys.path.insert(0, os.path.join(REPO, "conet"))
@@ -60,13 +61,15 @@ def n_to_threshold_classical(p, tau=0.9):
     return float(np.ceil(np.log(1.0 - tau) / np.log(1.0 - p)))
 
 def n_to_threshold_quantum(p, tau=0.9):
+    """Calls (2j+1) needed to cross ``tau`` with a phase-matched final step."""
     if p <= 0.0:
         return np.inf
     if p >= 1.0:
-        return 0.0
+        return 1.0
     theta = np.arcsin(np.sqrt(p))
     kth = (np.arcsin(np.sqrt(tau)) / theta - 1.0) / 2.0      # first crossing
-    return float(np.ceil(max(0.0, kth)))
+    iterations = np.ceil(max(0.0, kth))
+    return float(2.0 * iterations + 1.0)
 
 # ───────────────────────── checkpoint indexing ────────────────────────
 SEED_RE = re.compile(r"seed(\d+)")
@@ -204,10 +207,9 @@ def fig_queries_scatter(rows, out, tau=0.9):
     x = 1.0 / ps
     nc = np.array([n_to_threshold_classical(p, tau) for p in ps])
     nq = np.array([n_to_threshold_quantum(p, tau) for p in ps])
-    nq = np.maximum(nq, 0.5)                    # for log axis
     fig, ax = plt.subplots(figsize=(7, 4.6))
-    ax.scatter(x, nc, s=8, alpha=0.35, label="best@n  ~ 1/p", color="#1f77b4")
-    ax.scatter(x, nq, s=8, alpha=0.35, label="AA  ~ 1/sqrt(p)", color="#d62728")
+    ax.scatter(x, nc, s=8, alpha=0.35, label=r"classical sampling, $O(1/p)$", color="#1f77b4")
+    ax.scatter(x, nq, s=8, alpha=0.35, label=r"phase-matched amplification, $O(1/\sqrt{p})$", color="#d62728")
     # log-log slope fits
     sc = np.polyfit(np.log(x), np.log(nc), 1)[0]
     qm = nq > 0
@@ -218,10 +220,10 @@ def fig_queries_scatter(rows, out, tau=0.9):
     ax.plot(xr, np.exp(np.polyval(cc, np.log(xr))), "-", color="#1f77b4", lw=1.5)
     ax.plot(xr, np.exp(np.polyval(cq, np.log(xr))), "-", color="#d62728", lw=1.5)
     ax.set_xscale("log"); ax.set_yscale("log")
-    ax.set_xlabel("1 / p"); ax.set_ylabel(f"queries to reach acc={tau}")
-    ax.set_title(f"F3: queries-to-threshold  (fit slopes: best@n={sc:.2f}, AA={sq:.2f})")
+    ax.set_xlabel(r"inverse base probability $1/p$")
+    ax.set_ylabel(rf"reasoning-circuit applications to reach success ${tau}$")
     ax.legend(); ax.grid(alpha=0.3, which="both"); fig.tight_layout()
-    f = os.path.join(out, "F3_queries_vs_invp.png"); fig.savefig(f, dpi=150); plt.close(fig)
+    f = os.path.join(out, "F3_queries_vs_invp.pdf"); fig.savefig(f); plt.close(fig)
     print(f"[F3] saved {f}  (slopes best@n={sc:.2f}, AA={sq:.2f})")
 
 # ───────────────────────── main ───────────────────────────────────────

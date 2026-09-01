@@ -14,18 +14,17 @@ the quantum-classical correspondence in one picture):
            (rotation, peak at p*). Training targets follow: collapse vs
            interior attractor.
 
-Run from notes/:  python plot_mapping_schematic.py
+Run from notes/:  python scripts/plot_mapping_schematic.py
 """
 import os
-HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.abspath(os.path.join(HERE, ".."))
 os.environ.setdefault("MPLBACKEND", "Agg")
 import numpy as np
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Rectangle, Arc, FancyArrowPatch
 
-OUT = os.path.join(REPO, "figs", "S14_mapping_schematic.png")
+
+OUT = "figs/S14_mapping_schematic.png"
 GOOD, BAD, Q, RED, VIO = "#2ca02c", "0.60", "#1f77b4", "#d62728", "#4b0082"
 
 
@@ -69,22 +68,22 @@ def draw_policy(ax):
     for r, row in enumerate((".62  .25  .13", ".08  .81  .11", ".33  .34  .33")):
         ax.text(tx + 1.45, ty + 1.55 - 0.55 * r, row, ha="center",
                 fontsize=7.5, family="monospace", color="0.25")
-    ax.text(6.0, -0.15, "sample a move per node, step by step;\n"
-            "the answer is one full path", ha="center", va="top", fontsize=9)
-    ax.set_title("classical walker (CoNet): routing table,\n"
-                 "one path per attempt", fontsize=10)
+    ax.text(6.0, -0.15, "sample one action at each step;\n"
+            "one attempt follows one trajectory", ha="center", va="top", fontsize=9)
+    ax.set_title("classical CoNet: transition probabilities,\n"
+                 "one trajectory per attempt", fontsize=10)
 
 
 # ────────────────────────── row 1, right: AR quantum circuit ───────────
-def draw_circuit(ax):
+def draw_circuit(ax, description=True):
     x0, x1 = 1.0, 9.6
     wires = [("pos", 3.9, r"$|Q\rangle$")] + \
             [(f"c{s}", 2.9 - 0.75 * (s - 1), rf"$|c_{s}\rangle$") for s in (1, 2, 3)]
     for _, y, lab in wires:
         ax.plot([x0, x1], [y, y], color="0.35", lw=1.1, zorder=1)
         ax.text(x0 - 0.15, y, lab, ha="right", va="center", fontsize=8.5)
-    ax.text(x0 + 6.15, 0.62, r"$\cdots\ M$ steps, one fresh coin register each",
-            ha="center", fontsize=8)
+    ax.text(x0 + 6.15, 0.62, r"$\cdots\ M$ steps, one fresh path-record register each",
+            ha="center", fontsize=10.5)
     for s in (1, 2, 3):
         xc = 1.9 + 2.15 * (s - 1)
         yc = 2.9 - 0.75 * (s - 1)
@@ -109,11 +108,12 @@ def draw_circuit(ax):
         ax.add_patch(Arc((mx, y - 0.1), 0.4, 0.4, theta1=20, theta2=160,
                          color="k", lw=1.1, zorder=4))
         ax.plot([mx, mx + 0.13], [y - 0.1, y + 0.16], color="k", lw=1.1, zorder=4)
-    ax.text(6.0, -0.15, "the records mark which edge was taken; measured,\n"
-            "the walk is a classical Markov chain, its paths orthogonal",
-            ha="center", va="top", fontsize=9)
-    ax.set_title("quantum walker (QuCoNet), autoregressive mode:\n"
-                 r"$\mathcal{A}=\prod_s S\,C_{x}$, then measure", fontsize=10)
+    if description:
+        ax.text(6.0, -0.15, "the records mark which edge was taken; measured,\n"
+                "the walk is a classical Markov chain, its paths orthogonal",
+                ha="center", va="top", fontsize=9)
+    ax.set_title("QuCoNet reasoning circuit:\n"
+                 r"$\mathcal{A}=\prod_s S\,C_{x}$", fontsize=10)
 
 
 # ────────────────────────── row 2, left: verifier as filter ────────────
@@ -142,7 +142,7 @@ def draw_filter(ax):
                          arrowstyle="-|>", color="0.3", lw=1.3, ls=":")
     ax.add_patch(ar)
     ax.text(4.7, -0.4, r"retry $\times k$", fontsize=8.5, color="0.3", ha="center")
-    ax.text(9.0, 3.4, "verifier =\nfilter on\ncomplete\nanswers",
+    ax.text(9.0, 3.4, "terminal\nverifier",
             fontsize=8.5, color="0.2", ha="left", va="center")
     ax.text(6.0, -1.25,
             r"$\mathrm{cl}_k(p)=1-(1-p)^k$ is monotone in $p$ (Prop.~1)"
@@ -166,9 +166,9 @@ def draw_mirror(ax, caption=True):
             fontweight="bold", zorder=6)
     # the mirror: a vertical bar at the endpoints flipping phase of the good one
     ax.plot([8.05, 8.05], [0.2, 5.3], color=VIO, lw=3.0, zorder=4)
-    ax.text(8.25, 5.1, r"phase mirror $I-2P_G$", fontsize=8.5, color=VIO,
+    ax.text(8.25, 5.1, r"verifier reflection $I-2P_G$", fontsize=8.5, color=VIO,
             ha="left", va="center")
-    ax.text(8.25, 4.35, r"$|\mathrm{good}\rangle\!\to\!-|\mathrm{good}\rangle$",
+    ax.text(8.25, 4.35, r"$|\mathrm{accepted}\rangle\!\to\!-|\mathrm{accepted}\rangle$",
             fontsize=8, color=VIO, ha="left")
     # rotation inset
     ins = ax.inset_axes([0.74, 0.06, 0.25, 0.44])
@@ -184,10 +184,10 @@ def draw_mirror(ax, caption=True):
     if caption:
         ax.text(6.0, -1.25,
                 r"$A_n(p)=\sin^2[(2n{+}1)\arcsin\sqrt{p}\,]$ peaks at interior $p$"
-                "\ntraining optimum: the attractor $p^{*}(n)$",
+                "\ntraining optimum: $p^{*}(n)$",
                 ha="center", va="top", fontsize=9)
-    ax.set_title("verifier as phase mirror: one coherent try,\n"
-                 "rounds rotate weight onto the verified branch", fontsize=10)
+    ax.set_title("coherent verifier and state-preparation reflections:\n"
+                 "Grover rounds amplify the accepted component", fontsize=10)
 
 
 def main():
@@ -220,7 +220,7 @@ def main():
     # ── PRL model-only panel: top row (the architecture), collab request #62 2026-07-13.
     # The classical routing-table walker == the AR coined-walk circuit (which-path
     # records), rendered without the test-time row (that overlaps the PRL's Fig 1).
-    OUT_MODEL = os.path.join(REPO, "figs", "S14b_model_schematic.png")
+    OUT_MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "figs", "S14b_model_schematic.png")
     figm, axm = plt.subplots(1, 2, figsize=(12.6, 4.2))
     draw_policy(axm[0]); draw_circuit(axm[1])
     for ax in axm:
@@ -238,17 +238,17 @@ def main():
     # 2026-07-16 three-figure consolidation): the SAME walk in both regimes --
     # measured it is a classical Markov chain (trainable, simulable); run
     # coherently, the verifier acts as a phase mirror and the good/bad subspace
-    # rotates -- amplitude amplification, with no classical sampling equivalent.
-    OUT_Q3 = os.path.join(REPO, "figs", "Q3_model_quantum.png")
+    # rotates -- amplitude amplification, beyond verdict-only sampling access.
+    OUT_Q3 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "figs", "Q3_model_quantum.pdf")
     figq, axq = plt.subplots(1, 3, figsize=(16.5, 4.7))
     draw_policy(axq[0]); draw_circuit(axq[1]); draw_mirror(axq[2], caption=False)
     for ax in axq:
         ax.set_xlim(-0.4, 12.0); ax.axis("off")
     axq[0].set_ylim(-1.4, 5.4); axq[1].set_ylim(-1.4, 5.4)
     axq[2].set_ylim(-2.1, 5.9)
-    axq[2].text(5.6, -1.35, "amplitude amplification: certainty in "
+    axq[2].text(5.6, -1.35, "amplitude amplification: constant success in "
                 r"$O(1/\sqrt{p})$ coherent" "\nqueries where classical sampling needs "
-                r"$O(1/p)$: no classical equivalent",
+                r"$O(1/p)$ with terminal-outcome-only sampling",
                 ha="center", va="top", fontsize=8.5, color=RED)
     figq.text(0.352, 0.50, r"$\equiv$", fontsize=22, ha="center", va="center", color="0.1")
     figq.text(0.352, 0.40, "measured:\nsame Markov\ndistribution\n(trainable)",
@@ -256,12 +256,9 @@ def main():
     figq.text(0.655, 0.50, r"$\Rightarrow$", fontsize=22, ha="center", va="center", color=RED)
     figq.text(0.655, 0.395, "run\ncoherently:\nverifier\nreflects",
               fontsize=7.6, ha="center", va="center", color=RED)
-    figq.text(0.5, 1.02, "The same walk: a classical Markov chain when measured, "
-              "an amplifiable superposition when run coherently",
-              fontsize=11, ha="center", va="center", fontweight="bold", color="0.1")
     figq.tight_layout(rect=(0, 0, 1, 0.97))
     figq.subplots_adjust(wspace=0.30)
-    figq.savefig(OUT_Q3, dpi=160, bbox_inches="tight")
+    figq.savefig(OUT_Q3, bbox_inches="tight")
     print("wrote", OUT_Q3)
     print(f"fig -> {OUT}")
 

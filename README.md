@@ -1,4 +1,4 @@
-# Training quantum reasoning models to think slowly: RLVR with Grover amplification
+# Do Quantum AIs Dream in Paths? Path-Integral Slow Thinking through Grover Interference
 
 Reproduction code for the paper (arXiv link to be added).
 Xiansheng Cai, Xiuhao Deng, and Kun Chen.
@@ -6,12 +6,14 @@ Xiansheng Cai, Xiuhao Deng, and Kun Chen.
 A quantum walker that prepares a coherent superposition over complete
 reasoning trajectories is trained with reinforcement learning on the
 *post-amplification* success probability, i.e. the reward is the measured
-verdict of the deployed circuit after n rounds of Grover amplification.
-Training then steers each question's success amplitude toward the interior
-attractor p*(n) = sin²[π/(2(2n+1))] instead of collapsing onto single paths,
-and the held-out advantage grows with the intended inference budget.  All
-experiments are exact classical simulations (statevector or position-Markov),
-so every probability in the paper is enumerated, not sampled.
+verdict of the deployed circuit after Grover amplification at the intended
+coherent inference depth (q reasoning-circuit applications, q = 2n+1 for n
+Grover rounds).  Training then steers each question's success amplitude
+toward the interior attractor p*(n) = sin²[π/(2(2n+1))] instead of
+collapsing onto single paths, and the held-out advantage grows with the
+inference depth.  All experiments are exact classical simulations
+(statevector or position-Markov), so every probability in the paper is
+enumerated, not sampled.
 
 ## Layout
 
@@ -49,9 +51,11 @@ every trained model, so the main quantitative claims re-derive offline.
 
 | artifact | script | needs |
 |---|---|---|
-| Fig. 1 (architecture + routing + target) | `scripts/plot_prl_fig1_routing_target.py` | archive (routing panel loads one trained walker) |
-| Fig. 2 (loss, collapse, payoff) | `scripts/plot_prl_fig2_collapse_payoff.py` | caches |
-| Fig. 3 (capacity knee) | `scripts/plot_capacity_knee.py` | caches |
+| architecture + routing + interior-target figure | `scripts/plot_prl_fig1_routing_target.py` | archive (routing panel loads one trained walker) |
+| collapse/payoff comparison figure | `scripts/plot_prl_fig2_collapse_payoff.py` | caches |
+| capacity-knee figure | `scripts/plot_capacity_knee.py` | caches |
+| capacity scale-up knees, exponents, bootstrap CIs (the published capacity numbers live in `scripts/_sweep_out/capacity_scaleup_16.json`) | `scripts/capacity_scaleup_analysis.py --record final --quantum-results ... --classical-results ...` (rebuild) | archive |
+| controlled classical capacity distillation | `scripts/classical_capacity_controlled.py` | archive |
 | Table I ladder, blind schedule, knee errors, deep-n IPR | `scripts/blind_schedule_analysis.py` (`--no-ipr` for cache-only parts) | caches (IPR part: archive) |
 | Table I controls envelope, untrained row, cross-budget matrix | `scripts/control_audit_analysis.py` | caches |
 | SM attractor + deep-budget grids (S4, S6) | `scripts/grover_sweep_analysis.py` | archive (`--figs-only`: caches) |
@@ -75,9 +79,10 @@ validates its forward pipeline against the archived runs (max deviation
 ## Training from scratch
 
 The archived sweeps were produced by the launchers in `sweeps/` (they record
-every hyperparameter; protocol: Adam, lr 0.05, 200 epochs, torch seed 42,
-checkpoint selection by the objective-aligned training metric every 10
-epochs):
+every hyperparameter; protocol: Adam, lr 0.05, 200 epochs, torch seed 42;
+the quantum driver selects checkpoints by minimum training loss -- the exact
+negative objective, evaluated every 10 epochs -- and always saves the
+final-epoch state as well):
 
 | launcher | produces |
 |---|---|

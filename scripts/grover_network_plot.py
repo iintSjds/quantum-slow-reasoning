@@ -28,7 +28,8 @@ import amplification_scaling as amp
 import amplification_step1 as s1
 import grover_sweep_analysis as gsa
 
-FAMS = [("qstd", "one-shot trained"), ("grover", "grover-1 trained")]
+
+FAMS = [("qstd", "single-attempt trained"), ("grover", "Grover-trained, $q=3$")]
 
 def success_path_probs(apd, cm, snm, scm, Q, A, N, K, M, thr=1e-9):
     """All success paths with probs (same walk convention as the enumerator)."""
@@ -176,12 +177,12 @@ def three_models(args, apd):
     KCOL = ["#d62728", "#2ca02c", "#1f77b4"]     # coin channels (quantum only)
     CCOL = "#08306b"                             # classical: no coin register
     panels = []
-    panels.append(("CoNet, one-shot trained\n(classical walker)",
+    panels.append(("CoNet, single-attempt training",
                    classical_success_paths(tp, nbr, Q, A, args.M), False))
     cm, snm, scm, _, _ = models["qstd"]
-    panels.append(("QuCoNet, one-shot trained\n(measured walk, same architecture)",
+    panels.append(("QuCoNet, single-attempt training\n(same architecture)",
                    success_path_probs(apd, cm, snm, scm, Q, A, N, K, args.M), True))
-    panels.append(("QuCoNet, Grover-trained\n(one round converts $p^*$ to 1)",
+    panels.append(("QuCoNet, Grover-trained\n(one round amplifies $p^*(3)$ to 1)",
                    success_path_probs(apd, cmg, snmg, scmg, Q, A, N, K, args.M), True))
 
     # crop all panels to the region the success paths actually use
@@ -227,14 +228,11 @@ def three_models(args, apd):
     handles = [plt.Line2D([0], [0], color=c, lw=2.4) for c in KCOL]
     axes[1].legend(handles, [r"$|0\rangle$", r"$|1\rangle$", r"$|2\rangle$"],
                    fontsize=7.5, loc="lower left", framealpha=0.9,
-                   title="coin channel", title_fontsize=7.5)
-    fig.suptitle(f"Same question (Q={Q} $\\to$ A={A}, seed {args.seed}, "
-                 f"B={args.B}): where the success probability flows",
-                 y=1.02, fontsize=11)
+                   title="path-record channel", title_fontsize=7.5)
     fig.tight_layout()
     sfx = "_spring" if args.layout == "spring" else ""
-    f = os.path.join(args.out, f"D4_flows3_seed{args.seed}_B{args.B}{sfx}.png")
-    fig.savefig(f, dpi=160, bbox_inches="tight"); plt.close(fig)
+    f = os.path.join(args.out, f"D4_flows3_seed{args.seed}_B{args.B}{sfx}.pdf")
+    fig.savefig(f, bbox_inches="tight"); plt.close(fig)
     print(f"fig -> {f}  (pair idx {best_i}, grover IPR {best_ipr:.2f})")
 
 

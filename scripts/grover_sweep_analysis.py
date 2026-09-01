@@ -33,6 +33,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import torch
 
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import amplification_scaling as amp          # aa_acc, frac_interior, enumerator import
@@ -392,11 +393,13 @@ def fig_interior(cache, out):
     print(f"fig -> {f}")
 
 def fig_nscan(cache, out, B=32):
-    """Attractor scan: train-p histograms for grover-n objectives, n=1..4.
-    Each parks its mass at p*(n) = sin^2(pi/(2(2n+1)))."""
+    """Attractor scan at call budgets q=3,5,7,9.
+    Each parks its mass at p*(q) = sin^2(pi/(2q))."""
     fams = [("grover", 1, "#d62728"), ("grover2", 2, "#7f0000"),
             ("grover3", 3, "#9467bd"), ("grover4", 4, "#4b0082")]
-    fig, axes = plt.subplots(1, 4, figsize=(13, 3.2), sharey=True)
+    fig, axes_grid = plt.subplots(2, 2, figsize=(7.2, 5.6), sharex=True,
+                                  sharey=True)
+    axes = axes_grid.ravel()
     for ax, (fam, n, col) in zip(axes, fams):
         ps = pooled(cache, fam, B, "train")
         if not len(ps):
@@ -406,15 +409,15 @@ def fig_nscan(cache, out, B=32):
                 histtype="stepfilled", color=col, alpha=0.75)
         ax.axvline(pstar, ls="--", color="k", lw=1.2)
         ax.set_yscale("log")
-        ax.set_title(f"n={n}:  $p^*$={pstar:.3f},  "
-                     f"$\\langle A_n\\rangle$={aa_sr(ps, n):.3f}", fontsize=10)
-        ax.set_xlabel("train p")
+        q = 2 * n + 1
+        ax.set_title(rf"$q={q}$, $p^*({q})={pstar:.3f}$", fontsize=10)
+        ax.set_xlabel(r"training probability $p$")
         ax.set_xlim(0, 1)
-    axes[0].set_ylabel("density (log)")
-    fig.suptitle(f"Grover-$n$ objective parks mass at the attractor $p^*(n)$   (B={B}, train)")
+    axes_grid[0, 0].set_ylabel("probability density")
+    axes_grid[1, 0].set_ylabel("probability density")
     fig.tight_layout()
-    f = os.path.join(out, "S4_nscan_attractor.png")
-    fig.savefig(f, dpi=150, bbox_inches="tight"); plt.close(fig)
+    f = os.path.join(out, "S4_nscan_attractor.pdf")
+    fig.savefig(f, bbox_inches="tight"); plt.close(fig)
     print(f"fig -> {f}")
 
 def fig_headline_rr(cache, out):
@@ -483,8 +486,8 @@ def fig_deepn_valid(cache, out, rr=False):
     sfx = "_rr" if rr else ""
     fams = [(f"grover{sfx}", 1, "#d62728"), (f"grover2{sfx}", 2, "#7f0000"),
             (f"grover3{sfx}", 3, "#9467bd"), (f"grover4{sfx}", 4, "#4b0082")]
-    cls = [(f"cbestk_exact{sfx}", "CoNet best-2-trained (exact) + best@9", "#17becf"),
-           (f"ccap25{sfx}", "CoNet capped-0.25-trained (exact) + best@9", "#1f77b4")]
+    cls = [(f"cbestk_exact{sfx}", "best-of-two, nine-attempt reference", "#17becf"),
+           (f"ccap25{sfx}", r"capped at $0.25$, nine-attempt reference", "#1f77b4")]
     Bs = B_LIST_RR if rr else B_LIST
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
     for ax, letter in zip(axes, ("a", "b")):
@@ -499,18 +502,18 @@ def fig_deepn_valid(cache, out, rr=False):
             m = [aa_sr(pooled(cache, fam, B, split), n) for B in Bs]
             if np.any(np.isfinite(m)):
                 ax.plot(Bs, m, "-", color=col, marker="o", ms=4, lw=1.8,
-                        label=f"QuCoNet($A_{n}$) + AA$_{n}$  ($\\leq{2*n+1}$ queries)")
+                        label=rf"Grover-trained, $q={2 * n + 1}$")
         ax.set_xscale("log", base=2)
         ax.set_xticks(Bs); ax.set_xticklabels(Bs)
-        ax.set_xlabel("B (training pairs)")
-        ax.set_title(f"{split} — {'random-regular' if rr else 'sliding puzzle'} (N=120)")
-        ax.grid(alpha=0.3)
-    axes[0].set_ylabel("success rate")
-    axes[1].legend(fontsize=7.5, loc="upper right")
-    fig.suptitle("Deeper amplification budgets: trained-for-$n$ vs classical best-of-9")
+        ax.set_xlabel(r"training-set size $B$")
+        ax.set_title("training" if split == "train" else "held-out")
+        ax.grid(alpha=0.25)
+        ax.set_ylim(0, 1)
+    axes[0].set_ylabel("accuracy")
+    axes[1].legend(fontsize=8, loc="upper right")
     fig.tight_layout()
-    f = os.path.join(out, f"S6_deepn_valid{sfx}.png")
-    fig.savefig(f, dpi=150, bbox_inches="tight"); plt.close(fig)
+    f = os.path.join(out, f"S6_deepn_valid{sfx}.pdf")
+    fig.savefig(f, bbox_inches="tight"); plt.close(fig)
     print(f"fig -> {f}")
 
 def main():

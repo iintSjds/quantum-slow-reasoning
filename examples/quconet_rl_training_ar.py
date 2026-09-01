@@ -330,6 +330,7 @@ def main():
     # ── Epoch-0 evaluation (untrained model) ─────────────────────────
     history = []
     best_sr = 0.0
+    best_loss = float('inf')
     best_state = None
     best_epoch = 0
     t0 = time.time()
@@ -406,8 +407,12 @@ def main():
             'train_steps': float(train_steps) if train_steps is not None else None,
         }
 
-        # Track best model
-        if train_sr > best_sr:
+        # Track best model by the loss: it is the exact negative objective for
+        # every loss type here, whereas raw SR is not monotone in the grover
+        # objective (it parks p at an interior target, so max-SR archives the
+        # early overshoot transient at low B/N).
+        if math.isfinite(train_loss) and train_loss < best_loss:
+            best_loss = float(train_loss)
             best_sr = train_sr
             best_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
             best_epoch = epoch
@@ -479,7 +484,8 @@ def main():
             }, ckpt_path)
 
     elapsed = time.time() - t0
-    print(f"\nDone in {elapsed:.1f}s.  Best train SR={best_sr:.4f} at epoch {best_epoch}")
+    print(f"\nDone in {elapsed:.1f}s.  Best loss={best_loss:.6f} "
+          f"(train SR={best_sr:.4f}) at epoch {best_epoch}")
 
     # ── Save outputs ──────────────────────────────────────────────────
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -492,15 +498,31 @@ def main():
     output_dir = str(trainer.output_dir)
     os.makedirs(output_dir, exist_ok=True)
 
-    # Best model checkpoint
+    # Best model checkpoint (objective-selected); fall back to the final state
+    # if no finite loss was ever recorded
+    final_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
+    if best_state is None:
+        best_state, best_epoch = final_state, history[-1]['epoch']
     model_path = os.path.join(output_dir, f"{tag}_best_model.pt")
     torch.save({
         'model_state_dict': best_state,
         'config': {'N': N, 'K': K, 'M': M, 'B': B},
         'best_epoch': best_epoch,
         'best_sr': best_sr,
+        'best_loss': best_loss,
+        'selection': 'train_loss',
     }, model_path)
     print(f"Model: {model_path}")
+
+    # Final-epoch checkpoint, so converged states stay recoverable regardless
+    # of the selection rule
+    final_path = os.path.join(output_dir, f"{tag}_final_model.pt")
+    torch.save({
+        'model_state_dict': final_state,
+        'config': {'N': N, 'K': K, 'M': M, 'B': B},
+        'epoch': history[-1]['epoch'],
+    }, final_path)
+    print(f"Final model: {final_path}")
 
     # Results JSON
     def _default(o):
@@ -525,6 +547,9 @@ def main():
             },
             'metrics': {
                 'best_sr': best_sr, 'best_epoch': best_epoch,
+                'best_loss': best_loss, 'selection': 'train_loss',
+                'final_sr': history[-1]['train_sr'],
+                'final_epoch': history[-1]['epoch'],
                 'elapsed_s': elapsed
             },
             'train_qa': train_qa,

@@ -9,10 +9,11 @@ Only states with the hole in the middle column (indices 1 or 4) and matching the
 state's parity are valid graph nodes. This results in N=120 unique states forming a 
 3-regular graph (one of the two parity components).
 
-Note: The full puzzle has 240 states split into two 120-state components by parity.
-This module only works with the component containing the winning state (even parity).
-All moves (V, L, R) are odd permutations and flip parity, but since we only use one
-component, moves always stay within the component.
+Note: The standard 2x3 puzzle has 360 configurations reachable from a fixed goal.
+Restricting the hole to the middle column leaves 240 arrangements, split into two
+120-state components by the parity of the nonzero tiles. This module uses the
+component containing the winning state. The compound moves V, L, and R preserve
+that parity, so every move remains within the component.
 
 Moves:
 - V (Vertical): Swap hole with tile above/below (direct move)

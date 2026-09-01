@@ -27,6 +27,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import torch
 
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import amplification_scaling as amp
@@ -169,8 +170,16 @@ def table(cache):
 
 def fig_ipr_vs_B(cache, out):
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-    for ax, split in zip(axes, ("train", "valid")):
-        for fam, col in IPR_FAMS.items():
+    labels = {"grover": "Grover-based, $q=3$", "grover2": "Grover-based, $q=5$",
+              "qstd": "single-attempt, QuCoNet", "cstd": "single-attempt, sampled",
+              "cadam": "single-attempt, exact gradient", "cbestk": "best-of-two, sampled",
+              "cbestk_exact": "best-of-two, exact"}
+    for ax, split, title in zip(axes, ("train", "valid"), ("training", "held-out")):
+        # Keep the figure to the four comparisons needed for the argument;
+        # the complete audit remains available in the accompanying table.
+        shown = ("grover", "grover2", "qstd", "cbestk_exact")
+        for fam in shown:
+            col = IPR_FAMS[fam]
             m = []
             for B in gsa.B_LIST:
                 per_seed = [wipr(cache.get(f"{fam}|{s}|{B}|{split}", []))
@@ -180,18 +189,17 @@ def fig_ipr_vs_B(cache, out):
                 m.append(np.mean(per_seed) if per_seed else np.nan)
             if not np.any(np.isfinite(m)):
                 continue
-            ax.plot(gsa.B_LIST, m, "-o", color=col, ms=4, lw=1.8, label=fam)
+            ax.plot(gsa.B_LIST, m, "-o", color=col, ms=4, lw=1.8,
+                    label=labels.get(fam, fam))
         ax.axhline(1.0, ls=":", color="gray", lw=1)
         ax.set_xscale("log", base=2)
         ax.set_xticks(gsa.B_LIST); ax.set_xticklabels(gsa.B_LIST)
-        ax.set_xlabel("B"); ax.set_title(split); ax.grid(alpha=0.3)
-    axes[0].set_ylabel("accuracy-weighted ⟨IPR⟩ (effective # paths)")
-    axes[0].legend(fontsize=8)
-    fig.suptitle("Path diversity of the trained models: does inference-aware training "
-                 "keep an ensemble (IPR>1) or one attenuated path (IPR≈1)?")
+        ax.set_xlabel(r"training-set size $B$"); ax.set_title(title); ax.grid(alpha=0.25)
+    axes[0].set_ylabel(r"success-weighted $\langle\mathrm{IPR}\rangle$")
+    axes[0].legend(fontsize=7.5, ncol=2)
     fig.tight_layout()
-    f = os.path.join(out, "D2_ipr_vs_B.png")
-    fig.savefig(f, dpi=150, bbox_inches="tight"); plt.close(fig)
+    f = os.path.join(out, "D2_ipr_vs_B.pdf")
+    fig.savefig(f, bbox_inches="tight"); plt.close(fig)
     print(f"fig -> {f}")
 
 def fig_scatter(cache, out, B=32):

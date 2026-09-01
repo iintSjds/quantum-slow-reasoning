@@ -4,7 +4,9 @@ from4090/*
 
 # regenerated analysis outputs (distilled JSON caches ARE tracked)
 scripts/_sweep_out/*.png
+scripts/_sweep_out/*.pdf
 scripts/_amp_out/*.png
+scripts/_amp_out/*.pdf
 scripts/_step1_out/
 scripts/__pycache__/
 
