@@ -19,7 +19,7 @@ cache key, and archived path matches verbatim.
 
 | subdirectory            | size   | contents |
 |-------------------------|--------|----------|
-| `grover_sweep/`         | 175 MB | main N=120 sliding-puzzle sweep: Grover-n=1..4 coin walkers and one-shot / best-of-k classical families at 32 seeds x B; capped / entropy control families at 32 seeds at B=32; semi (measured-walk) best-of-k control families (Grover n=1 low-B cells re-recorded at the converged min-loss checkpoint; superseded max-SR records archived alongside) |
+| `grover_sweep/`         | 175 MB | main N=120 sliding-puzzle sweep: Grover-n=1..4 coin walkers and one-shot / best-of-k classical families at 32 seeds x B; capped / entropy control families at 32 seeds at B=32; semi (measured-walk) best-of-k families at 32 seeds at B=32 and eight at B in {8,128} (B=32 semi records re-run under the converged min-loss selection; superseded 8-seed records archived alongside) (Grover n=1 low-B cells re-recorded at the converged min-loss checkpoint; superseded max-SR records archived alongside) |
 | `grover_sweep_bigB/`    | 16 MB  | large-B capacity scan on the 768-pair distance-6 pools (knee fits) |
 | `grover_sweep_ext/`     | 4.6 MB | B1280-pool extension uncensoring the n=5,6 knees |
 | `grover_sweep_nscan/`   | 30 MB  | random-3-regular N-scan of the capacity knee (N=120..960) |
