@@ -138,7 +138,8 @@ def main():
                 "centH01", "centH03", "centH10",
                 "cbentH01", "cbentH03", "cbentH10",
                 "cbestkX4", "cbestkX8", "cbestkX16", "cbestkX32", "cbestkX64",
-                "qbkX2", "qbkX4", "qbkX8", "qstd"]
+                "qbkX2", "qbkX4", "qbkX8", "qbkX16", "qbkX32", "qbkX64",
+                "qstd"]
     ax = axes[2]
     m, lo, hi = curve("cadam", "train", np.mean)
     ax.plot(B_LIST, m, ":", color="0.55", lw=1.4,
