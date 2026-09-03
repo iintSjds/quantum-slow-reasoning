@@ -1,6 +1,6 @@
 """PRL Fig 1: the model, and the behavior that separates it from classical.
 
-Main-text figure 1: the opening figure pairs the
+Three-figure consolidation (xcai 2026-07-16): the opening figure pairs the
 framework with its signature behavior --
   (a) the QuCoNet AR circuit          -- the proposed quantum reasoning model
                                          (drawn by notes/scripts/plot_mapping_schematic)
@@ -18,7 +18,7 @@ grover_network_plot.three_models, so they reproduce D4_flows3's Q=79 seed-1
 B=32 instance (CoNet p=0.993 IPR=1.10; Grover p=0.250 IPR=3.95).
 
 Run from repo root:
-  python scripts/plot_prl_fig1_routing_target.py
+  conda run -n conet python docs/discussion/scripts/plot_prl_fig1_routing_target.py
 """
 import os, sys, json, argparse, math
 os.environ.setdefault("MPLBACKEND", "Agg")
@@ -26,8 +26,10 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import scienceplots  # noqa: F401  (registers the SciencePlots styles)
 import networkx as nx
 
+plt.style.use(["science", "no-latex"])
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -36,7 +38,7 @@ import amplification_step1 as s1
 import grover_sweep_analysis as gsa
 import grover_network_plot as gnp
 
-OUTDIR = os.path.abspath(os.path.join(HERE, "..", "figs"))
+OUTDIR = os.path.abspath(os.path.join(HERE, "..", "figs", "ttamp"))
 
 BLUE = "#1f4e79"
 RED = "#c62828"
@@ -184,7 +186,7 @@ def prepare(args):
             used.update(path)
     xs = [pos[u][0] for u in used]
     ys = [pos[u][1] for u in used]
-    mx = 0.14 * max(max(xs) - min(xs), max(ys) - min(ys))
+    mx = 0.07 * max(max(xs) - min(xs), max(ys) - min(ys))
     xlim = (min(xs) - mx, max(xs) + mx)
     ylim = (min(ys) - mx, max(ys) + mx)
 
@@ -218,28 +220,28 @@ def render_flow_panel(ax, D, panel, width_fn=flow_width, alpha_fn=flow_alpha):
         ax.scatter(*D["pos"][node], s=140, c=c, marker=m, zorder=5,
                    edgecolors="k", linewidths=0.7)
     ax.set_title(rf"{lab}: $p={pt:.3f}$, $\mathrm{{IPR}}={ipr:.2f}$",
-                 fontsize=10)
+                 fontsize=10, pad=3)
     ax.set_xlim(*D["xlim"]); ax.set_ylim(*D["ylim"])
     ax.set_axis_off()
 
 
 def build(args):
-    sys.path.insert(0, HERE)
+    sys.path.insert(0, os.path.join(args.root, "notes", "scripts"))
     import plot_mapping_schematic as pms
 
     D = prepare(args)
     Q, A, best_ipr = D["Q"], D["A"], D["best_ipr"]
 
-    fig = plt.figure(figsize=(13.6, 5.2))
+    fig = plt.figure(figsize=(13.6, 4.3))
     gs = fig.add_gridspec(2, 2, width_ratios=(1.12, 1.0),
-                          height_ratios=(1.0, 1.0), wspace=0.06, hspace=0.34)
+                          height_ratios=(1.0, 1.0), wspace=0.06, hspace=0.26)
     ax_arch = fig.add_subplot(gs[:, 0])
     ax_conet = fig.add_subplot(gs[0, 1])
     ax_qu = fig.add_subplot(gs[1, 1])
 
     pms.draw_circuit(ax_arch, description=False)
-    ax_arch.set_xlim(-0.4, 12.0)
-    ax_arch.set_ylim(-1.6, 5.6)
+    ax_arch.set_xlim(0.9, 10.45)
+    ax_arch.set_ylim(0.30, 4.55)
     ax_arch.axis("off")
 
     render_flow_panel(ax_conet, D, D["panels"][0])
@@ -247,16 +249,17 @@ def build(args):
 
     handles = [plt.Line2D([0], [0], color=c, lw=2.4) for c in D["KCOL"]]
     ax_qu.legend(handles, [r"$|0\rangle$", r"$|1\rangle$", r"$|2\rangle$"],
-                 fontsize=10, loc="lower left", bbox_to_anchor=(0, -0.12),
-                 framealpha=0.9, ncol=3,
-                 title="path-record channel", title_fontsize=10,
-                 columnspacing=0.9, handlelength=1.1)
+                 fontsize=9, loc="lower left", bbox_to_anchor=(0.0, 0.0),
+                 framealpha=0.85, ncol=3,
+                 title="path-record channel", title_fontsize=9,
+                 columnspacing=0.9, handlelength=1.1,
+                 borderpad=0.35, handletextpad=0.5)
 
-    ax_arch.text(0.005, 1.045, "a", transform=ax_arch.transAxes, fontsize=13,
+    ax_arch.text(0.005, 1.06, "a", transform=ax_arch.transAxes, fontsize=13,
                  fontweight="bold", va="top")
-    ax_conet.text(-0.015, 1.20, "b", transform=ax_conet.transAxes, fontsize=13,
+    ax_conet.text(-0.015, 1.16, "b", transform=ax_conet.transAxes, fontsize=13,
                   fontweight="bold", va="top")
-    ax_qu.text(-0.015, 1.20, "c", transform=ax_qu.transAxes, fontsize=13,
+    ax_qu.text(-0.015, 1.16, "c", transform=ax_qu.transAxes, fontsize=13,
                fontweight="bold", va="top")
 
     os.makedirs(OUTDIR, exist_ok=True)
@@ -268,7 +271,7 @@ def build(args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--root", default=os.environ.get("QSR_ROOT", os.path.abspath(os.path.join(HERE, ".."))))
+    ap.add_argument("--root", default=os.path.abspath(os.path.join(HERE, "..", "..", "..")))
     ap.add_argument("--out", default=os.path.join(HERE, "_sweep_out"))
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--B", type=int, default=32)
