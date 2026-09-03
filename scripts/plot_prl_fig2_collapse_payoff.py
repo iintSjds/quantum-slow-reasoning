@@ -1,6 +1,6 @@
 """PRL Fig 2: loss map, collapse, and the matched-budget payoff (3 panels).
 
-Main-text figure 2: this figure carries the
+Three-figure consolidation (xcai 2026-07-16): this figure now carries the
 whole "different loss -> less collapse -> better performance" arc, in the
 shape of the PRX overview figure:
 
@@ -13,16 +13,16 @@ shape of the PRX overview figure:
                   G_{<=3}-trained walker concentrates at p*(3)=0.25.
 (c) payoff     -- one amplification round on the A_1-trained walker vs the
                   ENVELOPE of the trained control family at the matched
-                  3-query budget (per-B max of best-of-3 over the 24
-                  classical / same-architecture objectives; the control audit
+                  3-query budget (per-B max of best-of-3 over the 27
+                  classical / same-architecture objectives; referee round-2
                   fix -- the old single bo2-trained control understated the
                   strongest classical use of the budget).
 
 Data: _sweep_out/p_cache.json (32 seeds, exact enumeration).  Writes the
-figure straight into figs/.
+figure straight into the manuscript graphicspath (docs/discussion/figs/ttamp).
 
 Run from repo root:
-  python scripts/plot_prl_fig2_collapse_payoff.py
+  conda run -n conet python docs/discussion/scripts/plot_prl_fig2_collapse_payoff.py
 """
 import os, sys, json, math
 import numpy as np
@@ -30,12 +30,14 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import to_rgba
+import scienceplots  # noqa: F401  (registers the SciencePlots styles)
 
+plt.style.use(["science", "no-latex"])
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 CACHE = json.load(open(os.path.join(HERE, "_sweep_out", "p_cache.json")))
-OUTDIR = os.path.abspath(os.path.join(HERE, "..", "figs"))
+OUTDIR = os.path.abspath(os.path.join(HERE, "..", "figs", "ttamp"))
 B_LIST = [8, 16, 32, 48, 64, 96, 128]
 
 C_CB, C_Q, C_G = "#08306b", "#ff7f0e", "#d62728"
@@ -154,7 +156,8 @@ def main():
                 best = (float(v.mean()), float(v.min()), float(v.max()))
         env_m.append(best[0]); env_lo.append(best[1]); env_hi.append(best[2])
     ax.plot(B_LIST, env_m, "-D", color=C_CB, ms=4, lw=1.8,
-            label="strongest classical control\n(best of 24 objectives at $q=3$)")
+            label="strongest classical control\n"
+                  f"(best of {len(CONTROLS)} objectives at $q=3$)")
     ax.fill_between(B_LIST, env_lo, env_hi, color=C_CB, alpha=0.15, lw=0)
     m, lo, hi = curve("grover", "train",
                       lambda x: float(np.mean([A_env(v, 1) for v in x])))
