@@ -67,6 +67,9 @@ every trained model, so the main quantitative claims re-derive offline.
 | SM query-scaling figure (F3) | `scripts/amplification_scaling.py --cache --figs F3` | caches (full rebuild: archive) |
 | SM circuit verification table | `scripts/circuit_verify.py` | archive (one checkpoint) |
 | SM two-sided imported-target controls | `scripts/twosided_target_control.py`, then `scripts/twosided_coin_control.py` | archive |
+| SM two-sided path-diversity (IPR) comparison (cached values: `scripts/_sweep_out/ipr_twosided_coin.json`) | `scripts/twosided_ipr_wave.py` (rebuild) | archive |
+| SM adaptive-vs-fixed-depth capacity protocol comparison | `scripts/fixed_depth_capacity_check.py` | caches |
+| SM verification-cost sensitivity (best-of-13 envelope, revised ratios) | `scripts/cost_model_sensitivity.py` | caches |
 | SM untrained-walker size/difficulty scaling | `scripts/untrained_scaling.py` | archive |
 | SM query-count exchange rate | `scripts/grover_exchange_rate.py` | caches |
 | capacity-knee cache rebuild (large-B / N-scan) | `scripts/frust_analysis.py`, `scripts/frust_nscan_analysis.py` | archive |
