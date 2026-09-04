@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""P1-5b / P1-7b analysis of the Deng-response experiment wave.
+"""Robustness audits: optimizer-seed cross-audit and node-relabeling invariance.
 
-Reads the harvested runs under from4090/deng_wave/results/ (36 seedaudit
+Reads the harvested runs under from4090/robustness_audits/results/ (36 seedaudit
 runs: {grover n=1, grover n=4, best-of-4} x pools 1-4 x torch seeds
 {7,123,2026}; 16 relabel runs: grover n=1 on pools 1-8 x 2 node
 permutations, torch seed 42), computes per-question (p, IPR) on the train
 and held-out splits with the standard enumerator, and caches them to
-_sweep_out/deng_wave_cache.json (keys "tag|split" -> [[p, ipr], ...]).
+_sweep_out/robustness_audits.json (keys "tag|split" -> [[p, ipr], ...]).
 
 Report mode (--report) prints
   A. P1-5b: pool x torch-seed matrices (archived seed-42 column from
@@ -31,8 +31,8 @@ sys.path.insert(0, os.path.join(ROOT, "quconet"))
 sys.path.insert(0, HERE)
 
 OUT = os.path.join(HERE, "_sweep_out")
-CACHE = os.path.join(OUT, "deng_wave_cache.json")
-RESULTS = os.path.join(ROOT, "from4090", "deng_wave", "results")
+CACHE = os.path.join(OUT, "robustness_audits.json")
+RESULTS = os.path.join(ROOT, "from4090", "robustness_audits", "results")
 M = 8
 
 

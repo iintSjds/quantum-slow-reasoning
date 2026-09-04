@@ -70,7 +70,7 @@ every trained model, so the main quantitative claims re-derive offline.
 | SM two-sided path-diversity (IPR) comparison (cached values: `scripts/_sweep_out/ipr_twosided_coin.json`) | `scripts/twosided_ipr_wave.py` (rebuild) | archive |
 | SM adaptive-vs-fixed-depth capacity protocol comparison | `scripts/fixed_depth_capacity_check.py` | caches |
 | SM verification-cost sensitivity (best-of-13 envelope, revised ratios) | `scripts/cost_model_sensitivity.py` | caches |
-| SM optimizer-seed cross-audit + relabeling invariance | `scripts/deng_wave_analysis.py --report` | caches (compute rebuild: archive) |
+| SM optimizer-seed cross-audit + relabeling invariance | `scripts/robustness_audits.py --report` | caches (compute rebuild: archive) |
 | SM untrained-walker size/difficulty scaling | `scripts/untrained_scaling.py` | archive |
 | SM query-count exchange rate | `scripts/grover_exchange_rate.py` | caches |
 | capacity-knee cache rebuild (large-B / N-scan) | `scripts/frust_analysis.py`, `scripts/frust_nscan_analysis.py` | archive |
