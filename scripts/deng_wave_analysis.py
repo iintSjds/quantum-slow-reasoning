@@ -30,8 +30,6 @@ os.environ["QSR_REPO_ROOT"] = ROOT
 sys.path.insert(0, os.path.join(ROOT, "quconet"))
 sys.path.insert(0, HERE)
 
-import amplification_scaling as amp            # noqa: E402
-
 OUT = os.path.join(HERE, "_sweep_out")
 CACHE = os.path.join(OUT, "deng_wave_cache.json")
 RESULTS = os.path.join(ROOT, "from4090", "deng_wave", "results")
@@ -74,6 +72,7 @@ def run_tag(d):
 
 
 def compute():
+    import amplification_scaling as amp
     apd = amp._import_enumerators(ROOT)
     cache = json.load(open(CACHE)) if os.path.exists(CACHE) else {}
     dirs = sorted(glob.glob(os.path.join(RESULTS, "*")))
