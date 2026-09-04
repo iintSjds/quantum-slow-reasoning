@@ -1,7 +1,7 @@
 # Do Quantum AIs Dream in Paths? Path-Integral Slow Thinking through Grover Interference
 
 Reproduction code for the paper (arXiv link to be added).
-Xiansheng Cai, Xiuhao Deng, and Kun Chen.
+Xiansheng Cai, Xiu-Hao Deng, and Kun Chen.
 
 A quantum walker that prepares a coherent superposition over complete
 reasoning trajectories is trained with reinforcement learning on the
@@ -96,6 +96,7 @@ final-epoch state as well):
 | `sweeps/frust_sweep.sh`, `sweeps/extend_knee_sweep.sh` | large-B capacity scan (`grover_sweep_bigB/`, `grover_sweep_ext/`) |
 | `sweeps/nscan_gen.sh`, `sweeps/nscan_sweep.sh` | capacity-knee N-scan (`grover_sweep_nscan/`) |
 | `sweeps/tcoin_sweep.sh` | transformer-coin stages (`tcoin_merged/` was merged from 32-seed re-runs of these) |
+| `sweeps/robustness_audits.sh` | optimizer-seed cross-audit + node-relabeling invariance runs (analyzed by `scripts/robustness_audits.py`) |
 
 Single runs, e.g.:
 

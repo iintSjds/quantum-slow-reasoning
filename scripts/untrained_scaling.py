@@ -2,7 +2,7 @@
 """How the untrained (uniform) walker's held-out convertibility scales with
 graph size and task difficulty, versus trained systems.
 
-Referee round 3 context: on the D6/M8 puzzle at N=120 the untrained walker
+Context: on the D6/M8 puzzle at N=120 the untrained walker
 under blind amplification tops every trained system held-out.  Question:
 is that a small-graph artifact?  Two axes:
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""P1-2 cost-model sensitivity: matched classical attempts under variable
+"""Cost-model sensitivity: matched classical attempts under variable
 verification pricing.
 
 With a coherent reflection priced at lambda_v circuit-application units and a

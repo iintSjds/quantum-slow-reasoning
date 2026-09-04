@@ -10,7 +10,7 @@ Table~\\ref{tab:neural}.  Three panels:
       while the same network under the one-shot objective collapses to {0,1};
   (b) capacity recast in model size: <G_{<=3}> vs training load B at fixed 29k
       parameters -- the plateau runs past B=256 (6.4x the 720-parameter
-      table's knee B0=40), and held-out accuracy rises with B;
+      table's four-pool 0.90-threshold knee B0=40), and held-out accuracy rises with B;
   (c) held-out ladder at matched answer-circuit budget q: the shared transformer
       beats the per-node table and the strongest same-architecture classical
       control, already at q=3.
@@ -103,7 +103,7 @@ trA = [np.mean([np.mean([gacc(p, 1) for p in r["tr"]]) for r in sel(R, "g1", B)]
 vaA = [np.mean([np.mean([bacc(p, 1) for p in r["va"]]) for r in sel(R, "g1", B)]) for B in Bs]
 b.plot(Bs, trA, "o-", color="#4b0082", lw=2, ms=5, label=r"training $\langle G_{\leq 3}\rangle$")
 b.axvline(40, ls=":", color="0.5", lw=1.3)
-b.text(41, 0.905, r"$720$-parameter table: $B_0=40$", fontsize=7.5, color="0.35", rotation=90, va="bottom")
+b.text(41, 0.905, r"$720$-parameter table: $B_0^{(0.90)}=40$", fontsize=7.5, color="0.35", rotation=90, va="bottom")
 b.axhline(0.9, ls=":", color="0.7", lw=1)
 b.set_xscale("log", base=2); b.set_xticks(Bs); b.set_xticklabels(Bs)
 b.set_ylim(0.0, 1.03); b.set_xlabel(r"training-set size $B$ (fixed $29$k parameters)")

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""P0-3 decisive analysis: IPR of the two-sided imported-target COIN control.
+"""Path-diversity comparison: IPR of the two-sided imported-target COIN control.
 
 Retrains the tscoin family (L = sum_i (p_i - c)^2 on the coin architecture,
 protocol identical to twosided_coin_control.py) because the original runs

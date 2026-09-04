@@ -1,6 +1,6 @@
 """PRL Fig 1: the model, and the behavior that separates it from classical.
 
-Three-figure consolidation (xcai 2026-07-16): the opening figure pairs the
+Three-figure consolidation: the opening figure pairs the
 framework with its signature behavior --
   (a) the QuCoNet AR circuit          -- the proposed quantum reasoning model
                                          (drawn by notes/scripts/plot_mapping_schematic)

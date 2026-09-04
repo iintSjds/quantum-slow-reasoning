@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""P0-4: capacity knees under the adaptive G<=q protocol vs blind fixed-depth
+"""Capacity knees under the adaptive G<=q protocol vs blind fixed-depth
 G_q, both computed from the SAME per-question caches (p_cache_bigB.json:
 legacy 4-pool knee grid, n=1..6, full B range incl. the ext extension)."""
 import json, math, os

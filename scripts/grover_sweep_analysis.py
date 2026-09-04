@@ -1,12 +1,12 @@
 """
-B-sweep analysis for the route-2 grover experiment (itp4090 sweep).
+B-sweep analysis for the route-2 grover experiment (GPU sweep).
 
 Compares three trained-model families on the SAME QA files / splits
 (train_qa = first B pairs, valid_qa = fixed 64 held-out, verified identical
 across families for matched (seed, B)):
 
   grover : QuCoNet-AR trained with the Grover-n=1 objective
-           (adam lr=0.05, <=200 epochs + early stop; itp4090 sweep,
+           (adam lr=0.05, <=200 epochs + early stop; GPU sweep,
             pulled to from4090/grover_sweep/)
   qstd   : QuCoNet-AR trained one-shot (expr4 archive)   [protocol differs:
            optimizer/lr not matched -- reference, not a strict control]

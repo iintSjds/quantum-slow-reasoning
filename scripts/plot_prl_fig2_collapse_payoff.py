@@ -1,6 +1,6 @@
 """PRL Fig 2: loss map, collapse, and the matched-budget payoff (3 panels).
 
-Three-figure consolidation (xcai 2026-07-16): this figure now carries the
+Three-figure consolidation: this figure now carries the
 whole "different loss -> less collapse -> better performance" arc, in the
 shape of the PRX overview figure:
 
@@ -14,7 +14,7 @@ shape of the PRX overview figure:
 (c) payoff     -- one amplification round on the A_1-trained walker vs the
                   ENVELOPE of the trained control family at the matched
                   3-query budget (per-B max of best-of-3 over the 27
-                  classical / same-architecture objectives; referee round-2
+                  classical / same-architecture objectives; revision
                   fix -- the old single bo2-trained control understated the
                   strongest classical use of the budget).
 

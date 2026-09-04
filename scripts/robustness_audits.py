@@ -9,10 +9,10 @@ and held-out splits with the standard enumerator, and caches them to
 _sweep_out/robustness_audits.json (keys "tag|split" -> [[p, ipr], ...]).
 
 Report mode (--report) prints
-  A. P1-5b: pool x torch-seed matrices (archived seed-42 column from
+  A. seed cross-audit: pool x torch-seed matrices (archived seed-42 column from
      p_cache.json), between-pool vs within-pool spread comparison (sd of per-pool means over all seeds vs RMS within-pool sd over seeds),
      and per-run boundary fractions (p_i > 0.98);
-  B. P1-7b: relabeled-pool accuracies against the native seed-42 runs.
+  B. relabeling invariance: relabeled-pool accuracies against the native seed-42 runs.
 
 Run from the repo root; compute is resumable.
 """
@@ -106,7 +106,7 @@ def report():
     cache = json.load(open(CACHE))
     pc = json.load(open(os.path.join(OUT, "p_cache.json")))
 
-    # ── A. P1-5b seed cross-audit ────────────────────────────────────────
+    # ── A. seed cross-audit ────────────────────────────────────────
     fams = {
         "g1":   ("grover",  lambda p: float(np.mean(G_le(p, 3))),
                  lambda p: float(np.mean(G_blind(p, 3)))),
@@ -117,7 +117,7 @@ def report():
     }
     TS = ["42", "7", "123", "2026"]
     print("=" * 72)
-    print("A. P1-5b pool x optimizer-seed cross-audit "
+    print("A. pool x optimizer-seed cross-audit "
           "(train metric / held-out metric)")
     for fam, (arch, f_tr, f_va) in fams.items():
         print(f"\n--- {fam}  (train: G<=q or bo-3; held-out: G_q or bo-9) ---")
@@ -149,9 +149,9 @@ def report():
         for i in range(4):
             print("    " + " ".join(f"{bfrac[i, j]:.3f}" for j in range(4)))
 
-    # ── B. P1-7b relabeling invariance ───────────────────────────────────
+    # ── B. relabeling invariance ───────────────────────────────────
     print("\n" + "=" * 72)
-    print("B. P1-7b node-relabeling invariance (grover n=1, torch seed 42)")
+    print("B. node-relabeling invariance (grover n=1, torch seed 42)")
     print("  pool | native tr / va | perm1 tr / va | perm2 tr / va")
     dtr, dva = [], []
     for pool in "12345678":
