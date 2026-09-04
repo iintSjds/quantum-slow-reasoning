@@ -249,7 +249,7 @@ def build(args):
 
     handles = [plt.Line2D([0], [0], color=c, lw=2.4) for c in D["KCOL"]]
     ax_qu.legend(handles, [r"$|0\rangle$", r"$|1\rangle$", r"$|2\rangle$"],
-                 fontsize=9, loc="lower left", bbox_to_anchor=(0.0, -0.085),
+                 fontsize=9, loc="lower left", bbox_to_anchor=(0.0, -0.18),
                  framealpha=0.85, ncol=3,
                  title="path-record channel", title_fontsize=9,
                  columnspacing=0.9, handlelength=1.1,
