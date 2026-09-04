@@ -15,7 +15,7 @@ Panels (b),(c) are the two kept panels of the old three-model flow figure
 objective not the substrate" -- lives in the Supplemental Material).  The
 question, layout and per-question numbers are selected exactly as in
 grover_network_plot.three_models, so they reproduce D4_flows3's Q=79 seed-1
-B=32 instance (CoNet p=0.993 IPR=1.10; Grover p=0.250 IPR=3.95).
+B=32 instance (CoNet p=0.993 IPR=1.10; Grover p=0.250 IPR=3.56).
 
 Run from repo root:
   conda run -n conet python docs/discussion/scripts/plot_prl_fig1_routing_target.py

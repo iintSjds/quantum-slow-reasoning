@@ -10,7 +10,7 @@ _sweep_out/deng_wave_cache.json (keys "tag|split" -> [[p, ipr], ...]).
 
 Report mode (--report) prints
   A. P1-5b: pool x torch-seed matrices (archived seed-42 column from
-     p_cache.json), variance decomposition (pool sd vs optimizer-seed sd),
+     p_cache.json), between-pool vs within-pool spread comparison (sd of per-pool means over all seeds vs RMS within-pool sd over seeds),
      and per-run boundary fractions (p_i > 0.98);
   B. P1-7b: relabeled-pool accuracies against the native seed-42 runs.
 
@@ -39,7 +39,8 @@ M = 8
 def G_le(p, q):
     p = np.clip(np.asarray(p, float), 0, 1)
     th = np.arcsin(np.sqrt(p))
-    rs = np.where(th > 0, np.round(np.pi / (4 * th) - 0.5), 0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        rs = np.where(th > 0, np.round(np.pi / (4 * th) - 0.5), 0)
     r = np.minimum(np.maximum(rs, 0), (q - 1) // 2)
     return np.sin((2 * r + 1) * th) ** 2
 
@@ -62,11 +63,15 @@ def run_tag(d):
     cfg = json.load(open(rj[0]))["config"]
     import re
     m = re.search(r"_seed(\d+)(?:_perm(\d+))?_s(\d+)_", base)
+    if m is None:
+        return None, None
     pool, perm, ts = m.group(1), m.group(2), m.group(3)
     if cfg["loss_type"] == "grover":
         fam = f"g{cfg['grover_n']}"
-    else:
+    elif cfg["loss_type"] == "bestk":
         fam = f"qbk{cfg['best_k']}"
+    else:
+        return None, None
     tag = f"{fam}|{pool}|{ts}" if perm is None else f"relabel_{fam}|{pool}p{perm}|{ts}"
     return tag, rj[0]
 
