@@ -19,7 +19,7 @@ set -u
 cd "$(dirname "$0")/.."
 source ~/miniconda3/etc/profile.d/conda.sh && conda activate conet
 export PYTORCH_ALLOC_CONF=expandable_segments:True
-QAD=from4090/expr4/graph_qa
+QAD=archive/expr4/graph_qa
 
 echo "[overnight2] armed $(date) — waiting for running sweeps to drain..."
 while pgrep -f "quconet_rl_training_ar|conet_adam_training" > /dev/null; do sleep 60; done

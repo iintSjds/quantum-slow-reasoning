@@ -7,7 +7,7 @@ across families for matched (seed, B)):
 
   grover : QuCoNet-AR trained with the Grover-n=1 objective
            (adam lr=0.05, <=200 epochs + early stop; GPU sweep,
-            pulled to from4090/grover_sweep/)
+            pulled to archive/grover_sweep/)
   qstd   : QuCoNet-AR trained one-shot (expr4 archive)   [protocol differs:
            optimizer/lr not matched -- reference, not a strict control]
   cstd   : CoNet classical trained one-shot (expr4, lr=3.0 REINFORCE)
@@ -40,57 +40,57 @@ import amplification_scaling as amp          # aa_acc, frac_interior, enumerator
 import amplification_step1 as s1             # run_index, split_qa, p_list
 
 FAMILIES = {   # name -> (glob under root, enumerator model type)
-    "grover": ("from4090/grover_sweep/**/grover_n1_*_best_model.pt", "quantum"),
-    "qstd":   ("from4090/expr4/quantum/**/*_best_model.pt",          "quantum"),
-    "cstd":   ("from4090/expr4/classical/N_120_k_3_M_8/**/*_best_model.pt", "classical"),
+    "grover": ("archive/grover_sweep/**/grover_n1_*_best_model.pt", "quantum"),
+    "qstd":   ("archive/expr4/quantum/**/*_best_model.pt",          "quantum"),
+    "cstd":   ("archive/expr4/classical/N_120_k_3_M_8/**/*_best_model.pt", "classical"),
     # matched-protocol classical (adam lr=0.05, same as the grover runs);
     # conet_adam_training.py saves a SoftmaxRouter state dict, not CSR tensors:
-    "cadam":  ("from4090/expr4/conet_adam/**/*_best_model.pt",       "softmax"),
+    "cadam":  ("archive/expr4/conet_adam/**/*_best_model.pt",       "softmax"),
     # classical inference-aware control (trained for best-of-2):
-    "cbestk": ("from4090/grover_sweep/**/cbestk2_*_best_model.pt",   "softmax"),
+    "cbestk": ("archive/grover_sweep/**/cbestk2_*_best_model.pt",   "softmax"),
     # protocol-identical one-shot classical (same 200ep+ES run as cbestk;
     # sanity check that cadam's 120ep archive is converged):
-    "cstd_adam": ("from4090/grover_sweep/**/cstd_adam_*_best_model.pt", "softmax"),
+    "cstd_adam": ("archive/grover_sweep/**/cstd_adam_*_best_model.pt", "softmax"),
     # exact-gradient classical controls (differentiable DP; no REINFORCE
     # dead-pair blindness -- isolate pure objective shape):
-    "cbestk_exact": ("from4090/grover_sweep/**/cbestkX2_*_best_model.pt", "softmax"),
-    "cstd_exact":   ("from4090/grover_sweep/**/cstdX1_*_best_model.pt",   "softmax"),
+    "cbestk_exact": ("archive/grover_sweep/**/cbestkX2_*_best_model.pt", "softmax"),
+    "cstd_exact":   ("archive/grover_sweep/**/cstdX1_*_best_model.pt",   "softmax"),
     # grover-n=2 (attractor p*=0.095):
-    "grover2": ("from4090/grover_sweep/**/grover_n2_*_best_model.pt", "quantum"),
+    "grover2": ("archive/grover_sweep/**/grover_n2_*_best_model.pt", "quantum"),
     # n-scan (B=32, seeds 1-8 only; attractors p*=0.049 / 0.030):
-    "grover3": ("from4090/grover_sweep/**/grover_n3_*_best_model.pt", "quantum"),
-    "grover4": ("from4090/grover_sweep/**/grover_n4_*_best_model.pt", "quantum"),
+    "grover3": ("archive/grover_sweep/**/grover_n3_*_best_model.pt", "quantum"),
+    "grover4": ("archive/grover_sweep/**/grover_n4_*_best_model.pt", "quantum"),
     # capped exact-gradient controls (imported confidence target; seeds 1-8):
-    "ccap25": ("from4090/grover_sweep/**/ccapX0.25_*_best_model.pt", "softmax"),
-    "ccap50": ("from4090/grover_sweep/**/ccapX0.5_*_best_model.pt",  "softmax"),
-    "ccap75": ("from4090/grover_sweep/**/ccapX0.75_*_best_model.pt", "softmax"),
+    "ccap25": ("archive/grover_sweep/**/ccapX0.25_*_best_model.pt", "softmax"),
+    "ccap50": ("archive/grover_sweep/**/ccapX0.5_*_best_model.pt",  "softmax"),
+    "ccap75": ("archive/grover_sweep/**/ccapX0.75_*_best_model.pt", "softmax"),
     # max-entropy controls ("just add an entropy bonus"; B in {8,32,128},
     # seeds 1-8, coef 0.01/0.03/0.1; cent = one-shot+H, cbent = best-of-2+H):
-    "centH01":  ("from4090/grover_sweep/**/centH0.01_*_best_model.pt",  "softmax"),
-    "centH03":  ("from4090/grover_sweep/**/centH0.03_*_best_model.pt",  "softmax"),
-    "centH10":  ("from4090/grover_sweep/**/centH0.1_*_best_model.pt",   "softmax"),
-    "cbentH01": ("from4090/grover_sweep/**/cbentH0.01_*_best_model.pt", "softmax"),
-    "cbentH03": ("from4090/grover_sweep/**/cbentH0.03_*_best_model.pt", "softmax"),
-    "cbentH10": ("from4090/grover_sweep/**/cbentH0.1_*_best_model.pt",  "softmax"),
+    "centH01":  ("archive/grover_sweep/**/centH0.01_*_best_model.pt",  "softmax"),
+    "centH03":  ("archive/grover_sweep/**/centH0.03_*_best_model.pt",  "softmax"),
+    "centH10":  ("archive/grover_sweep/**/centH0.1_*_best_model.pt",   "softmax"),
+    "cbentH01": ("archive/grover_sweep/**/cbentH0.01_*_best_model.pt", "softmax"),
+    "cbentH03": ("archive/grover_sweep/**/cbentH0.03_*_best_model.pt", "softmax"),
+    "cbentH10": ("archive/grover_sweep/**/cbentH0.1_*_best_model.pt",  "softmax"),
     # ── budget ladders (overnight3): each model trained for its OWN budget,
     #    evaluated at that budget.  qbkX-k = same-architecture QuCoNet-AR
     #    best-of-k ("semi" control, 720 params; AR p == classical Markov p by
     #    the which-path theorem).  cbestkX-k = classical CoNet exact best-of-k.
     #    grover5/6 extend the quantum ladder to budgets 11/13.  qbk + grover5/6
     #    are B in {8,32,128}; cbestkX-k is the full B grid.
-    "qbkX2":  ("from4090/grover_sweep/**/qbkX2_*_best_model.pt",  "quantum"),
-    "qbkX4":  ("from4090/grover_sweep/**/qbkX4_*_best_model.pt",  "quantum"),
-    "qbkX8":  ("from4090/grover_sweep/**/qbkX8_*_best_model.pt",  "quantum"),
-    "qbkX16": ("from4090/grover_sweep/**/qbkX16_*_best_model.pt", "quantum"),
-    "qbkX32": ("from4090/grover_sweep/**/qbkX32_*_best_model.pt", "quantum"),
-    "qbkX64": ("from4090/grover_sweep/**/qbkX64_*_best_model.pt", "quantum"),
-    "cbestkX4":  ("from4090/grover_sweep/**/cbestkX4_*_best_model.pt",  "softmax"),
-    "cbestkX8":  ("from4090/grover_sweep/**/cbestkX8_*_best_model.pt",  "softmax"),
-    "cbestkX16": ("from4090/grover_sweep/**/cbestkX16_*_best_model.pt", "softmax"),
-    "cbestkX32": ("from4090/grover_sweep/**/cbestkX32_*_best_model.pt", "softmax"),
-    "cbestkX64": ("from4090/grover_sweep/**/cbestkX64_*_best_model.pt", "softmax"),
-    "grover5": ("from4090/grover_sweep/**/grover_n5_*_best_model.pt", "quantum"),
-    "grover6": ("from4090/grover_sweep/**/grover_n6_*_best_model.pt", "quantum"),
+    "qbkX2":  ("archive/grover_sweep/**/qbkX2_*_best_model.pt",  "quantum"),
+    "qbkX4":  ("archive/grover_sweep/**/qbkX4_*_best_model.pt",  "quantum"),
+    "qbkX8":  ("archive/grover_sweep/**/qbkX8_*_best_model.pt",  "quantum"),
+    "qbkX16": ("archive/grover_sweep/**/qbkX16_*_best_model.pt", "quantum"),
+    "qbkX32": ("archive/grover_sweep/**/qbkX32_*_best_model.pt", "quantum"),
+    "qbkX64": ("archive/grover_sweep/**/qbkX64_*_best_model.pt", "quantum"),
+    "cbestkX4":  ("archive/grover_sweep/**/cbestkX4_*_best_model.pt",  "softmax"),
+    "cbestkX8":  ("archive/grover_sweep/**/cbestkX8_*_best_model.pt",  "softmax"),
+    "cbestkX16": ("archive/grover_sweep/**/cbestkX16_*_best_model.pt", "softmax"),
+    "cbestkX32": ("archive/grover_sweep/**/cbestkX32_*_best_model.pt", "softmax"),
+    "cbestkX64": ("archive/grover_sweep/**/cbestkX64_*_best_model.pt", "softmax"),
+    "grover5": ("archive/grover_sweep/**/grover_n5_*_best_model.pt", "quantum"),
+    "grover6": ("archive/grover_sweep/**/grover_n6_*_best_model.pt", "quantum"),
 }
 SPARSE = {"grover3", "grover4", "ccap25", "ccap50", "ccap75",
           "centH01", "centH03", "centH10", "cbentH01", "cbentH03", "cbentH10",
@@ -100,16 +100,16 @@ SPARSE = {"grover3", "grover4", "ccap25", "ccap50", "ccap75",
 # random-regular graph family (replication; own root dir so (seed,B) keys
 # don't collide with the sliding-puzzle runs; std_* = one-shot QuCoNet):
 FAMILIES_RR = {
-    "grover_rr":       ("from4090/grover_sweep_rr/**/grover_n1_*_best_model.pt", "quantum"),
-    "qstd_rr":         ("from4090/grover_sweep_rr/**/std_*_best_model.pt",       "quantum"),
-    "cstd_rr":         ("from4090/grover_sweep_rr/**/cstd_adam_*_best_model.pt", "softmax"),
-    "cbestk_exact_rr": ("from4090/grover_sweep_rr/**/cbestkX2_*_best_model.pt",  "softmax"),
-    "cstd_exact_rr":   ("from4090/grover_sweep_rr/**/cstdX1_*_best_model.pt",    "softmax"),
-    "ccap25_rr":       ("from4090/grover_sweep_rr/**/ccapX0.25_*_best_model.pt", "softmax"),
+    "grover_rr":       ("archive/grover_sweep_rr/**/grover_n1_*_best_model.pt", "quantum"),
+    "qstd_rr":         ("archive/grover_sweep_rr/**/std_*_best_model.pt",       "quantum"),
+    "cstd_rr":         ("archive/grover_sweep_rr/**/cstd_adam_*_best_model.pt", "softmax"),
+    "cbestk_exact_rr": ("archive/grover_sweep_rr/**/cbestkX2_*_best_model.pt",  "softmax"),
+    "cstd_exact_rr":   ("archive/grover_sweep_rr/**/cstdX1_*_best_model.pt",    "softmax"),
+    "ccap25_rr":       ("archive/grover_sweep_rr/**/ccapX0.25_*_best_model.pt", "softmax"),
     # deep-n on rr (B in {8,32,128}, seeds 1-8):
-    "grover2_rr":      ("from4090/grover_sweep_rr/**/grover_n2_*_best_model.pt", "quantum"),
-    "grover3_rr":      ("from4090/grover_sweep_rr/**/grover_n3_*_best_model.pt", "quantum"),
-    "grover4_rr":      ("from4090/grover_sweep_rr/**/grover_n4_*_best_model.pt", "quantum"),
+    "grover2_rr":      ("archive/grover_sweep_rr/**/grover_n2_*_best_model.pt", "quantum"),
+    "grover3_rr":      ("archive/grover_sweep_rr/**/grover_n3_*_best_model.pt", "quantum"),
+    "grover4_rr":      ("archive/grover_sweep_rr/**/grover_n4_*_best_model.pt", "quantum"),
 }
 B_LIST_RR = [8, 32, 128]
 
@@ -117,7 +117,7 @@ B_LIST_RR = [8, 32, 128]
 # (seed,B) filename keys collide across N).  N=480: quantum B=32 only
 # (B=128 OOM on the 48 GB card); N=960: classical control only (GPU OOM).
 def families_scanN(n):
-    root = f"from4090/grover_sweep_rr_N{n}"
+    root = f"archive/grover_sweep_rr_N{n}"
     return {
         "grover_rr":       (f"{root}/**/grover_n1_*_best_model.pt", "quantum"),
         "qstd_rr":         (f"{root}/**/std_*_best_model.pt",       "quantum"),

@@ -25,7 +25,7 @@ import torch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATAROOT = os.environ.get("QSR_ROOT", os.path.abspath(os.path.join(HERE, "..")))
-SWEEP = os.path.join(DATAROOT, "from4090", "grover_sweep")
+SWEEP = os.path.join(DATAROOT, "archive", "grover_sweep")
 OUT = os.path.join(HERE, "_sweep_out")
 
 CAPS = {"twosided25": 0.25, "twosided095": 0.0955,

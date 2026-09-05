@@ -235,7 +235,7 @@ def _print_batch_summary(results):
 
 def analyze_quantum_expr2(N=80, K=3, M=8, batch_sizes=None):
     """Analyze path diversity for expr2 quantum runs."""
-    quantum_dir = "from4090/expr2/quantum"
+    quantum_dir = "archive/expr2/quantum"
 
     if not os.path.exists(quantum_dir):
         print(f"Quantum directory not found: {quantum_dir}")
@@ -318,8 +318,8 @@ def analyze_classical_expr2(N=80, K=3, M=8, batch_sizes=None):
     Analyze path diversity for expr2 classical runs.
     Expr2 QA pairs have 14 batch sizes; expr1 has 7.
     """
-    ckpt_base = f"from4090/classical_ckpts/N_{N}_k_{K}_M_{M}"
-    results_base = f"from4090/expr2/classical/N_{N}_k_{K}_M_{M}"
+    ckpt_base = f"archive/classical_ckpts/N_{N}_k_{K}_M_{M}"
+    results_base = f"archive/expr2/classical/N_{N}_k_{K}_M_{M}"
 
     if not os.path.exists(ckpt_base):
         print(f"Checkpoint directory not found: {ckpt_base}")
@@ -331,7 +331,7 @@ def analyze_classical_expr2(N=80, K=3, M=8, batch_sizes=None):
     import re
     qa_groups = defaultdict(list)
     for d in all_dirs:
-        m = re.match(r'from4090_Q(\d+)A(\d+)__', d)
+        m = re.match(r'archive_Q(\d+)A(\d+)__', d)
         if m:
             qa = (int(m.group(1)), int(m.group(2)))
             bm = re.search(r'num_questions_(\d+)', d)

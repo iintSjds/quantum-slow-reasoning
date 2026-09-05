@@ -88,7 +88,7 @@ def index_checkpoints(paths):
     return idx
 
 def load_qa_pairs(root, seed):
-    f = os.path.join(root, "from4090/expr4/graph_qa",
+    f = os.path.join(root, "archive/expr4/graph_qa",
                      f"sliding_puzzle_N120_K3_M8_B192_D6_seed{seed}.pt")
     d = torch.load(f, map_location="cpu", weights_only=False)
     return [(int(q), int(a)) for (q, a) in d["qa_pairs"]]
@@ -113,8 +113,8 @@ def p_quantum(apd, ckpt, qa_pairs, M):
 # ───────────────────────── collection ─────────────────────────────────
 def collect(root, apd, Bs, seeds, M=8):
     """Return rows: dict(model, seed, B, p) with p a list over qa_pairs[:B]."""
-    qroot = os.path.join(root, "from4090/expr4/quantum")
-    croot = os.path.join(root, "from4090/expr4/classical")
+    qroot = os.path.join(root, "archive/expr4/quantum")
+    croot = os.path.join(root, "archive/expr4/classical")
     qidx = index_checkpoints(glob.glob(os.path.join(qroot, "**/*best_model*.pt"), recursive=True))
     cidx = index_checkpoints(glob.glob(os.path.join(croot, "**/*best_model*.pt"), recursive=True))
     avail_seeds = sorted({s for (s, B) in qidx} & {s for (s, B) in cidx})

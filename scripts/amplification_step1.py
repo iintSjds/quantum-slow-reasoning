@@ -38,10 +38,10 @@ SEED_RE = amp.SEED_RE
 BQA_RE  = amp.BQA_RE
 frac_interior = amp.frac_interior
 
-QROOT_GLOB = "from4090/expr4/quantum/**/*_best_model.pt"
-CROOT_GLOB = "from4090/expr4/classical/N_120_k_3_M_8/**/*_best_model.pt"   # lr=3.0, NOT legacy
-QTRAJ_DIR  = "from4090/expr4/quantum_ckpts/seed2_B3"
-CTRAJ_DIR  = ("from4090/expr4/classical/ckpts/N_120_k_3_M_8/"
+QROOT_GLOB = "archive/expr4/quantum/**/*_best_model.pt"
+CROOT_GLOB = "archive/expr4/classical/N_120_k_3_M_8/**/*_best_model.pt"   # lr=3.0, NOT legacy
+QTRAJ_DIR  = "archive/expr4/quantum_ckpts/seed2_B3"
+CTRAJ_DIR  = ("archive/expr4/classical/ckpts/N_120_k_3_M_8/"
               "conet_rl_sliding_puzzle_N120_K3_M8_B192_D6_seed2_B3_s42")
 
 # ───────────────────────── indexing / loading ─────────────────────────

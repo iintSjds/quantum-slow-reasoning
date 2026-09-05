@@ -26,7 +26,7 @@ from twosided_target_control import exact_success_probs, blind, bok, train_twosi
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATAROOT = os.environ.get("QSR_ROOT", os.path.abspath(os.path.join(HERE, "..")))
-F4090 = os.path.join(DATAROOT, "from4090")
+ARCHIVE = os.path.join(DATAROOT, "archive")
 OUT = os.path.join(HERE, "_sweep_out")
 
 RR_DIRS = {120: "grover_sweep_rr", 240: "grover_sweep_rr_N240",
@@ -38,7 +38,7 @@ M, B = 8, 32
 
 def rr_seed_assets(N, seed):
     for fam in ("cbestkX2", "cstdX1"):
-        hits = glob.glob(f"{F4090}/{RR_DIRS[N]}/conet_adam_randreg_N{N}_*_seed{seed}_B{B}_*/"
+        hits = glob.glob(f"{ARCHIVE}/{RR_DIRS[N]}/conet_adam_randreg_N{N}_*_seed{seed}_B{B}_*/"
                          f"{fam}_s{seed}_B{B}_*results.json")
         if hits:
             d = json.load(open(hits[0]))
@@ -134,7 +134,7 @@ def bfs_distances(nbr):
 
 def tcoin_family(tag, n):
     vals = []
-    for f in sorted(glob.glob(f"{F4090}/tcoin_merged/results/tcoin_{tag}_s*_B32_history.json")):
+    for f in sorted(glob.glob(f"{ARCHIVE}/tcoin_merged/results/tcoin_{tag}_s*_B32_history.json")):
         h = json.load(open(f))
         fin = h["history"][-1]
         if fin["epoch"] != h["args"]["epochs"]:
@@ -147,7 +147,7 @@ def part_B():
     print("\n" + "=" * 76)
     print("B. difficulty axis (puzzle, uniform walker over the full distance class)")
     print("=" * 76)
-    rj = glob.glob(f"{F4090}/grover_sweep/conet_adam_sliding_puzzle_N120*_seed1_B{B}_*/"
+    rj = glob.glob(f"{ARCHIVE}/grover_sweep/conet_adam_sliding_puzzle_N120*_seed1_B{B}_*/"
                    f"ccapX0.25_s1_B{B}_*results.json")[0]
     sd = torch.load(rj.replace("_results.json", "_best_model.pt"),
                     map_location="cpu", weights_only=False)["model_state_dict"]

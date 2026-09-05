@@ -2,7 +2,7 @@
 """PRL SM figure for the parameter-sharing neural coin (fig:sm-neural).
 
 Built from the merged 32-seed transformer-coin runs
-(from4090/tcoin_merged/results/, exact enumeration) so every number matches
+(archive/tcoin_merged/results/, exact enumeration) so every number matches
 Table~\\ref{tab:neural}.  Three panels:
   (a) attractor vs collapse: trained per-question p at B=32 -- the
       amplification objective parks the 29k-parameter transformer at the
@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, ".."))
 DATAROOT = os.environ.get("QSR_ROOT", REPO)
-ROOT = os.path.join(DATAROOT, "from4090", "tcoin_merged", "results")
+ROOT = os.path.join(DATAROOT, "archive", "tcoin_merged", "results")
 OUT = os.path.join(REPO, "figs", "Q5_neural_coin.pdf")
 # Per-node angle-table walker, held-out fixed-budget accuracy at B=32.
 TAB_VALID = {1: 0.042, 2: 0.147, 3: 0.272, 4: 0.407}

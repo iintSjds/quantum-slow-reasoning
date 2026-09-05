@@ -7,13 +7,13 @@ Populate it from the Zenodo deposit (DOI: to be added at submission), or
 point the scripts at an existing copy elsewhere by setting
 
 ```bash
-export QSR_ROOT=/path/to/dir-containing-from4090
+export QSR_ROOT=/path/to/parent-of-archive
 ```
 
-(`QSR_ROOT` is the *parent* of `from4090/`.)
+(`QSR_ROOT` is the *parent* of `archive/`.)
 
-The directory name is kept from the original archive so that every script,
-cache key, and archived path matches verbatim.
+All scripts resolve this directory as `<repo>/archive/`; `QSR_ROOT` is the
+parent directory of `archive/`.
 
 ## Expected layout
 

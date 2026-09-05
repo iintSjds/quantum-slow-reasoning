@@ -1,6 +1,6 @@
-# data archive mount (populated from the Zenodo deposit; see from4090/README.md)
-from4090/*
-!from4090/README.md
+# data archive mount (populated from the Zenodo deposit; see archive/README.md)
+archive/*
+!archive/README.md
 
 # regenerated analysis outputs (distilled JSON caches ARE tracked)
 scripts/_sweep_out/*.png

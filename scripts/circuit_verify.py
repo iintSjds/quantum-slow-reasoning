@@ -161,7 +161,7 @@ def main():
     apd = amp._import_enumerators(ROOT)
     if args.ckpt is None:
         hits = glob.glob(os.path.join(
-            ROOT, "from4090/grover_sweep/**/grover_n1_s1_B32_*best_model.pt"),
+            ROOT, "archive/grover_sweep/**/grover_n1_s1_B32_*best_model.pt"),
             recursive=True)
         args.ckpt = sorted(hits)[0]
     print(f"checkpoint: {os.path.relpath(args.ckpt, ROOT)}")

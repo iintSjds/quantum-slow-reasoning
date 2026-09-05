@@ -8,7 +8,7 @@ pools must reproduce the native results within seed spread.
 
 Usage (from repo root):
     python docs/discussion/scripts/relabel_qa.py --seeds 1-8 --perms 2 \
-        --out from4090/expr4/graph_qa_relabel
+        --out archive/expr4/graph_qa_relabel
 Writes <prefix>_seed<S>_perm<P>.pt with metadata recording the permutation.
 """
 import argparse, os
@@ -36,8 +36,8 @@ def relabel(src, perm_seed):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--qa-dir", default="from4090/expr4/graph_qa")
-    ap.add_argument("--out", default="from4090/expr4/graph_qa_relabel")
+    ap.add_argument("--qa-dir", default="archive/expr4/graph_qa")
+    ap.add_argument("--out", default="archive/expr4/graph_qa_relabel")
     ap.add_argument("--seeds", default="1-8")
     ap.add_argument("--perms", type=int, default=2)
     a = ap.parse_args()

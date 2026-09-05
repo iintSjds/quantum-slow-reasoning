@@ -33,7 +33,7 @@ SEED_END=${2:?Usage: ./run_grover_sweep.sh <seed_start> <seed_end> [grover|stand
 OBJ=${3:-grover}   # quconet: grover (n=1) | standard.  classical: cbestk (best-of-2) | cstd
 
 export CUDA_VISIBLE_DEVICES=${GPU-0}      # default GPU 0; GPU="" for CPU.
-QA_DIR=${QA_DIR:-from4090/expr4/graph_qa}
+QA_DIR=${QA_DIR:-archive/expr4/graph_qa}
 QA_PREFIX=${QA_PREFIX:-sliding_puzzle_N120_K3_M8_B192_D6}   # e.g. randreg_N120_K3_M8_B192
 EPOCHS=200
 LR=0.05

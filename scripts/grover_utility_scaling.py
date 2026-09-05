@@ -67,7 +67,7 @@ def uniform_p():
     if os.path.exists(UCACHE_PATH):
         return json.load(open(UCACHE_PATH))
     apd = amp._import_enumerators(ROOT)
-    idx = s1.run_index(ROOT, "from4090/grover_sweep/**/cbestkX2_*_best_model.pt")
+    idx = s1.run_index(ROOT, "archive/grover_sweep/**/cbestkX2_*_best_model.pt")
     out = {}
     for (seed, B), rec in sorted(idx.items()):
         if seed > 8:

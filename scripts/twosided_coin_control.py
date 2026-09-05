@@ -30,7 +30,7 @@ from quconet.operators_ar import CoinOperatorAR              # noqa: E402
 from quconet.quconet_ar import QuantumCoNetAR                # noqa: E402
 from twosided_target_control import blind, cached_family     # noqa: E402
 
-SWEEP = os.path.join(DATAROOT, "from4090", "grover_sweep")
+SWEEP = os.path.join(DATAROOT, "archive", "grover_sweep")
 OUT = os.path.join(HERE, "_sweep_out")
 CPU = torch.device("cpu")
 CAPS = {"tscoin25": 0.25, "tscoin095": 0.0955,

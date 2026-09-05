@@ -28,7 +28,7 @@ sweeps/      the exact sweep launchers that produced the archived runs
 scripts/     analysis + figure scripts; scripts/_sweep_out/ holds the
              distilled per-question probability caches (tracked)
 figs/        the manuscript figures as tracked reference artifacts
-from4090/    data archive mount (not tracked; see from4090/README.md)
+archive/     data archive mount (not tracked; see archive/README.md)
 ```
 
 ## Environment
@@ -46,8 +46,8 @@ Two tiers.  **Tier 1 (no download):** the distilled caches shipped in
 `scripts/_sweep_out/` contain the exact per-question success probabilities of
 every trained model, so the main quantitative claims re-derive offline.
 **Tier 2 (archive):** checkpoint-level analyses need the raw archive in
-`from4090/` (Zenodo DOI at submission; or set `QSR_ROOT`, see
-`from4090/README.md`).
+`archive/` (Zenodo DOI at submission; or set `QSR_ROOT`, see
+`archive/README.md`).
 
 | artifact | script | needs |
 |---|---|---|
@@ -62,6 +62,8 @@ every trained model, so the main quantitative claims re-derive offline.
 | SM path-support / IPR figure (D2) | `scripts/grover_ipr_analysis.py` | caches (rebuild: archive) |
 | SM flow portraits (D4) | `scripts/grover_network_plot.py` | archive |
 | SM mapping schematic (Q3) | `scripts/plot_mapping_schematic.py` | nothing |
+| task figure (sliding-puzzle moves, Fig. 2) | `scripts/draw_sliding_puzzle.py` | nothing |
+| concept-network schematic (Fig. 3) | `scripts/plot_conet_slow_thinking.py` | nothing |
 | SM neural-coin figure + table (Q5) | `scripts/plot_tcoin_prl_sm.py` | archive (`tcoin_merged/`) |
 | SM size scan (S7) | `scripts/grover_sizescan_analysis.py` | caches |
 | SM query-scaling figure (F3) | `scripts/amplification_scaling.py --cache --figs F3` | caches (full rebuild: archive) |
@@ -102,15 +104,15 @@ Single runs, e.g.:
 
 ```bash
 # quantum coin walker, Grover-n=2 objective, exact position-Markov forward
-python examples/quconet_rl_training_ar.py -f from4090/expr4/graph_qa/sliding_puzzle_N120_K3_M8_B192_D6_seed1.pt \
+python examples/quconet_rl_training_ar.py -f archive/expr4/graph_qa/sliding_puzzle_N120_K3_M8_B192_D6_seed1.pt \
     -B 32 --num-val 64 --epochs 200 --lr 0.05 --loss-type grover --grover-n 2 --markov
 
 # classical softmax walker, exact-gradient best-of-3
-python conet/conet_adam_training.py -f from4090/expr4/graph_qa/sliding_puzzle_N120_K3_M8_B192_D6_seed1.pt \
+python conet/conet_adam_training.py -f archive/expr4/graph_qa/sliding_puzzle_N120_K3_M8_B192_D6_seed1.pt \
     -B 32 --num-val 64 --epochs 200 --lr 0.05 --loss-type bestk --best-k 3
 
 # neural (transformer) coin, Grover-n=1
-python examples/transformer_coin_training.py -f from4090/expr4/graph_qa/sliding_puzzle_N120_K3_M8_B192_D6_seed1.pt \
+python examples/transformer_coin_training.py -f archive/expr4/graph_qa/sliding_puzzle_N120_K3_M8_B192_D6_seed1.pt \
     -B 32 --num-val 64 --epochs 200 --loss-type grover --grover-n 1
 ```
 

@@ -20,9 +20,9 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.join(REPO, "conet"))
 import analyze_path_diversity as apd
 
-ROOT = os.path.join(DATAROOT, "from4090", "grover_sweep_bigB")
-ROOT_EXT = os.path.join(DATAROOT, "from4090", "grover_sweep_ext")        # large-B extension (B1280_D6 pool)
-QADIR = os.path.join(DATAROOT, "from4090", "expr4", "graph_qa")
+ROOT = os.path.join(DATAROOT, "archive", "grover_sweep_bigB")
+ROOT_EXT = os.path.join(DATAROOT, "archive", "grover_sweep_ext")        # large-B extension (B1280_D6 pool)
+QADIR = os.path.join(DATAROOT, "archive", "expr4", "graph_qa")
 BS_OLD = [8, 16, 32, 64, 96, 128, 192, 256, 384, 512, 704]
 BS_NEW = [768, 896, 1024, 1216]               # extend n=5,6 past the censored edge
 BS = BS_OLD + BS_NEW

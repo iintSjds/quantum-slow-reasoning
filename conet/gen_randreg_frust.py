@@ -50,7 +50,7 @@ def main():
     ap.add_argument("-B", type=int, required=True, help="FULL pool size = maxB + num_val")
     ap.add_argument("-D", type=int, default=6)
     ap.add_argument("--seeds", type=int, nargs="+", default=[1, 2, 3, 4])
-    ap.add_argument("--output_dir", default="from4090/expr4/graph_qa")
+    ap.add_argument("--output_dir", default="archive/expr4/graph_qa")
     a = ap.parse_args()
     os.makedirs(a.output_dir, exist_ok=True)
     for seed in a.seeds:

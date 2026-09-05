@@ -20,8 +20,8 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.join(REPO, "conet"))
 import analyze_path_diversity as apd
 
-ROOT = os.path.join(DATAROOT, "from4090", "grover_sweep_nscan")
-QADIR = os.path.join(DATAROOT, "from4090", "expr4", "graph_qa")
+ROOT = os.path.join(DATAROOT, "archive", "grover_sweep_nscan")
+QADIR = os.path.join(DATAROOT, "archive", "expr4", "graph_qa")
 M, K = 8, 3
 SEEDS = (1, 2, 3, 4)
 # N -> (poolB, n_list, B_grid)   [same B/N grid across N by construction]

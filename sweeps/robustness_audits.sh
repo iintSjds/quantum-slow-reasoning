@@ -11,8 +11,8 @@
 set -u
 cd "$(dirname "$0")/.."
 export CUDA_VISIBLE_DEVICES="" OMP_NUM_THREADS=1
-QA_DIR=${QA_DIR:-from4090/expr4/graph_qa}
-QA_RELABEL=${QA_RELABEL:-from4090/expr4/graph_qa_relabel}
+QA_DIR=${QA_DIR:-archive/expr4/graph_qa}
+QA_RELABEL=${QA_RELABEL:-archive/expr4/graph_qa_relabel}
 PREFIX=sliding_puzzle_N120_K3_M8_B192_D6
 COMMON="-B 32 --num-val 64 --epochs 200 --lr 0.05 --optimizer adam --grad-clip 1.0 --eval-freq 10 --early-stop --es-tol 1e-4 --es-window 5"
 mkdir -p logs

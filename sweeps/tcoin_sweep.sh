@@ -9,7 +9,7 @@
 cd "$(dirname "$0")/.."
 source ~/miniconda3/etc/profile.d/conda.sh && conda activate conet
 export CUDA_VISIBLE_DEVICES=0
-QA=from4090/expr4/graph_qa
+QA=archive/expr4/graph_qa
 OUT=results_tcoin_sweep
 LOG=logs_tcoin
 mkdir -p $OUT $LOG

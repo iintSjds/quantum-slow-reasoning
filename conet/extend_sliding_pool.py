@@ -33,7 +33,7 @@ def all_dist_pairs(G, D):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--qa-dir", default="from4090/expr4/graph_qa")
+    ap.add_argument("--qa-dir", default="archive/expr4/graph_qa")
     ap.add_argument("--in-prefix", default="sliding_puzzle_N120_K3_M8_B768_D6")
     ap.add_argument("--maxtrain", type=int, default=1216,
                     help="largest training-set size B the extended pool must support")
